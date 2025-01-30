@@ -1,20 +1,28 @@
-import type { ComponentType, JSX } from 'react';
+import type { ComponentType, } from 'react';
 
-import { IndexPage } from '@/pages/IndexPage/IndexPage';
-import { InitDataPage } from '@/pages/InitDataPage.tsx';
-import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
-import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
-import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
+//import { IndexPage } from '@/pages/IndexPage/IndexPage';
+//import { InitDataPage } from '@/pages/InitDataPage.tsx';
+//import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
+//import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
+//import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
+
+import { FlyPage } from '@/pages/FlyPage/FlyPage';
+import { BoostPage } from '@/pages/BoostPage/BoostPage';
+import { TasksPage } from '@/pages/TasksPage/TasksPage';
+import { MePage } from '@/pages/MePage/MePage';
+import { DropPage } from '@/pages/DropPage/DropPage';
+
+
+
 
 interface Route {
   path: string;
   Component: ComponentType;
   title?: string;
-  icon?: JSX.Element;
 }
 
 export const routes: Route[] = [
-  { path: '/', Component: IndexPage },
+  /*{ path: '/', Component: IndexPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },
@@ -40,5 +48,11 @@ export const routes: Route[] = [
         />
       </svg>
     ),
-  },
+  },*/
+
+  {path: '/', Component: FlyPage, title: 'Fly'},
+  {path: '/boost', Component: BoostPage, title: 'Boost'},
+  {path: '/tasks', Component: TasksPage, title: 'Tasks'},
+  {path: '/me', Component: MePage, title: 'Me'},
+  {path: '/drop', Component: DropPage, title: 'Drop'},
 ];

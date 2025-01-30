@@ -1,5 +1,6 @@
+@import "tailwindcss";
 body {
-  background: var(--tg-theme-secondary-bg-color, red);
+  background: var(--tg-theme-secondary-bg-color, #ff0000);
   padding: 0;
   margin: 0;
 }

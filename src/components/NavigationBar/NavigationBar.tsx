@@ -1,39 +1,36 @@
 import { FC } from 'react';
-import FlyPageIcon from '@/components/icons/FlyPageIcon.svg';
-import BoostPageIcon from '@/components/icons/BoostPageIcon.svg';
-import TasksPageIcon from '@/components/icons/TasksPageIcon.svg';
-import MePageIcon from '@/components/icons/MePageIcon.svg';
-import DropPageIcon from '@/components/icons/DropPageIcon.svg';
+import { useState } from 'react';
+import FlyPageIcon from '../icons/FlyPageIcon/FlyPageIcon';
+import BoostPageIcon from '../icons/BoostPageIcon/BoostPageIcon';
+import TasksPageIcon from '../icons/TasksPageIcon/TasksPageIcon';
+import MePageIcon from '../icons/MePageIcon/MePageIcon';
+import DropPageIcon from '../icons/DropPageIcon/DropPageIcon';
 
-interface NavigationBarProps {
-    currentPage: string;
-    onNavigate: (page: string) => void;
-}
-
-export const NavigationBar: FC<NavigationBarProps> = ({ currentPage, onNavigate }) => {
+export const NavigationBar: FC = () => {
+    const [currentPage, setCurrentPage] = useState('Fly');
     const pages = [
-        { id: 'Fly', icon: FlyPageIcon, title: 'Fly' },
-        { id: 'Boost', icon: BoostPageIcon, title: 'Boost' },
-        { id: 'Tasks', icon: TasksPageIcon, title: 'Tasks' },
-        { id: 'Me', icon: MePageIcon, title: 'Me' },
-        { id: 'Drop', icon: DropPageIcon, title: 'Drop' },
+        { id: 'Fly', icon: FlyPageIcon, title: 'FLY' },
+        { id: 'Boost', icon: BoostPageIcon, title: 'BOOST' },
+        { id: 'Tasks', icon: TasksPageIcon, title: 'TASKS' },
+        { id: 'Me', icon: MePageIcon, title: 'ME' },
+        { id: 'Drop', icon: DropPageIcon, title: 'DROP' },
     ];
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 h-16 bg-gray-900 flex items-center justify-around px-4">
-          {pages.map(({ id, icon: Icon, title }) => (
-            <button
-              key={id}
-              onClick={() => onNavigate(id)}
-              className={`flex flex-col items-center gap-1 p-2 transition-colors ${
-                currentPage === id ? 'text-blue-400' : 'text-gray-400'
-              }`}
-            >
-              <img src={Icon} alt={title} className="w-6 h-6" />
-              <span className="text-xs">{}</span>
-            </button>
-          ))}
-        </nav>
-    );
+      <nav className="bg-purple-900 fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] max-w-[400px] h-16 rounded-2xl flex items-center justify-around shadow-lg">
+        {pages.map(({ id, icon: Icon, title }) => (
+          <button
+            key={id}
+            onClick={() => setCurrentPage(id)}
+            className={`flex flex-col items-center justify-center gap-1 p-2 w-15 h-15 rounded-2xl ${
+              currentPage === id ? 'bg-purple-600 text-white'  : 'bg-purple-900 text-white'
+            }`}
+          >
+            <Icon className="w-130 h-130" />
+            <span className="text-xs">{title}</span>
+          </button>
+        ))}
+      </nav>
+  );
 
 }
