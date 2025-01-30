@@ -1,5 +1,5 @@
 body {
-  background: var(--tg-theme-secondary-bg-color, white);
+  background: var(--tg-theme-secondary-bg-color, red);
   padding: 0;
   margin: 0;
 }
