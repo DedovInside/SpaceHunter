@@ -1,6 +1,8 @@
 @import "tailwindcss";
+
 body {
-  background: var(--tg-theme-secondary-bg-color, #ff0000);
+  background: #2c1b52 url('../assets/background_image_Space_Hunter.jpg') no-repeat center center fixed;
+  background-size: cover;
   padding: 0;
   margin: 0;
 }
