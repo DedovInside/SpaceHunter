@@ -1,0 +1,67 @@
+.boost-page-container {
+    padding-top: 80px;
+    padding-bottom: 80px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.boost-categories-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    border-radius: 16px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #2C1B52;
+}
+
+.boost-category-card {
+    padding: 16px;
+    border-radius: 16px;
+    width: 90%;
+    text-align: center;
+}
+
+.boost-category-active {
+    background-color: #1F0735;
+    color: white;
+    text-decoration: underline;
+}
+
+.boost-category-inactive {
+    background-color: #1F0735;
+    color: white;
+}
+
+.boost-cards-container {
+    background-color: #2C1B52;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: 16px;
+    padding: 16px;
+    width: 100%;
+    gap: 16px;
+}
+
+.boost-card-button {
+    background-color: #2C1B52;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    padding: 20px 12px;
+    text-align: center;
+    line-height: 1.2;
+    gap: 16px;
+    min-height: 160px;
+}
+
+.boost-card-icon {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+}

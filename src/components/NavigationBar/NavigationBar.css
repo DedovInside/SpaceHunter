@@ -1,0 +1,48 @@
+/* NavigationBar.css */
+.navbar {
+  background-color: #2C1B52;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 500px;
+  height: 4rem; /* 16 * 0.25rem */
+  border-radius: 1rem; /* 16 * 0.25rem */
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.navbar-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem; /* 1 * 0.25rem */
+  padding: 0.5rem; /* 2 * 0.25rem */
+  width: 3.75rem; /* 15 * 0.25rem */
+  height: 3.75rem; /* 15 * 0.25rem */
+  border-radius: 1rem; /* 16 * 0.25rem */
+}
+
+.navbar-button.active {
+  background-color: #1F0735;
+  color: white;
+}
+
+.navbar-button.inactive {
+  background-color: #2C1B52;
+  color: white;
+}
+
+.navbar-button span {
+  font-size: 0.6rem;
+}
+
+.navbar-button img {
+  width: 2.5rem;
+  height: 2.5rem;
+}

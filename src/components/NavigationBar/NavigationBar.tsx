@@ -1,14 +1,12 @@
 import { FC, useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // Добавлен useLocation
-import FlyPageIcon from '../icons/FlyPageIcon/FlyPageIcon';
-import BoostPageIcon from '../icons/BoostPageIcon/BoostPageIcon';
-import TasksPageIcon from '../icons/TasksPageIcon/TasksPageIcon';
-import MePageIcon from '../icons/MePageIcon/MePageIcon';
-import DropPageIcon from '../icons/DropPageIcon/DropPageIcon';
+import { useNavigate, useLocation } from 'react-router-dom';
+import FlyPageIcon from '../icons/FlyPageIcon/FlyPageIcon.svg';
+import BoostPageIcon from '../icons/BoostPageIcon/BoostPageIcon.svg';
+import TasksPageIcon from '../icons/TasksPageIcon/TasksPageIcon.svg';
+import MePageIcon from '../icons/MePageIcon/MePageIcon.svg';
+import DropPageIcon from '../icons/DropPageIcon/DropPageIcon.svg';
+import './NavigationBar.css';
 
-
-
-// Enum для страниц
 enum Page {
     Fly = 'Fly',
     Boost = 'Boost',
@@ -19,10 +17,9 @@ enum Page {
 
 export const NavigationBar: FC = () => {
     const navigate = useNavigate();
-    const location = useLocation(); // Добавлен useLocation для определения текущего пути
+    const location = useLocation();
     const [currentPage, setCurrentPage] = useState<Page | null>(null);
 
-    // Определяем текущую страницу на основе пути
     const getCurrentPageFromPath = (path: string): Page | null => {
         const page = Object.values(Page).find(
             (p) => path.toLowerCase() === `/spacehunter/${p.toLowerCase()}`
@@ -30,8 +27,6 @@ export const NavigationBar: FC = () => {
         return page || null;
     };
 
-
-    // Обновляем currentPage при изменении пути
     useEffect(() => {
         setCurrentPage(getCurrentPageFromPath(location.pathname));
     }, [location.pathname]);
@@ -50,47 +45,18 @@ export const NavigationBar: FC = () => {
         console.log(id);
     };
 
-
     return (
-        <nav
-            className="bg-purple-900 fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] max-w-[400px] h-16 rounded-2xl flex items-center justify-around shadow-lg">
-
-            <button key={'Fly'}
-                    onClick={() => handlePageClick(pages[0].id)}
-                    className={`flex flex-col items-center justify-center gap-1 p-2 w-15 h-15 rounded-2xl ${
-                        currentPage === 'Fly' ? 'bg-purple-600 text-white' : 'bg-purple-900 text-white'}`}>
-                <span className={"text-xs"}>FLY</span>
-            </button>
-
-            <button key={'Boost'}
-                    onClick={() => handlePageClick(pages[1].id)}
-                    className={`flex flex-col items-center justify-center gap-1 p-2 w-15 h-15 rounded-2xl ${
-                        currentPage === 'Boost' ? 'bg-purple-600 text-white' : 'bg-purple-900 text-white'}`}>
-                <span className={"text-xs"}>Boost</span>
-            </button>
-
-            <button key={'Tasks'}
-                    onClick={() => handlePageClick(pages[2].id)}
-                    className={`flex flex-col items-center justify-center gap-1 p-2 w-15 h-15 rounded-2xl ${
-                        currentPage === 'Tasks' ? 'bg-purple-600 text-white' : 'bg-purple-900 text-white'}`}>
-                <span className={"text-xs"}>TASKS</span>
-            </button>
-
-            <button key={'Me'}
-                    onClick={() => handlePageClick(pages[3].id)}
-                    className={`flex flex-col items-center justify-center gap-1 p-2 w-15 h-15 rounded-2xl ${
-                        currentPage === 'Me' ? 'bg-purple-600 text-white' : 'bg-purple-900 text-white'}`}>
-                <span className={"text-xs"}>ME</span>
-            </button>
-
-            <button key={'Drop'}
-                    onClick={() => handlePageClick(pages[4].id)}
-                    className={`flex flex-col items-center justify-center gap-1 p-2 w-15 h-15 rounded-2xl ${
-                        currentPage === 'Drop' ? 'bg-purple-600 text-white' : 'bg-purple-900 text-white'}`}>
-                <span className={"text-xs"}>DROP</span>
-            </button>
-
-
+        <nav className="navbar">
+            {pages.map((page) => (
+                <button
+                    key={page.id}
+                    onClick={() => handlePageClick(page.id)}
+                    className={`navbar-button ${currentPage === page.id ? 'active' : 'inactive'}`}
+                >
+                    <img src={page.icon} alt={`${page.title} icon`} className="w-5 h-5" />
+                    <span>{page.title}</span>
+                </button>
+            ))}
         </nav>
     );
 };

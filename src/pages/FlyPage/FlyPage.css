@@ -1,0 +1,35 @@
+.fly-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+
+.buttons-container {
+  display: flex;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  width: 100%;
+  margin-bottom: 32px;
+  justify-content: center;
+}
+
+/*.content_button {
+  padding: 16px;
+  border-radius: 9999px;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}*/
+
+.content_button img {
+  width: 100%;
+  height: 100%;
+}
