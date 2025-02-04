@@ -55,16 +55,16 @@
     justify-content: center;
     color: white;
     font-size: 8px;
-    padding: 20px 12px;
+    padding: 10px 40px;
     text-align: center;
     line-height: 1.2;
     gap: 16px;
-    min-height: 160px;
+    min-height: 130px;
 }
 
 .boost-card-icon {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
 }
 
