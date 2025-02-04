@@ -12,6 +12,18 @@ import yourLevelIcon from '../../../assets/Your_Level_Modal_Icon.png';
 
 import './FlyPage.css';
 
+const nftSections = [
+  { name: 'Planets', count: 8 },
+  { name: 'Satellites', count: 14 },
+  { name: 'Stars', count: 21 },
+  { name: 'Constellations', count: 21 },
+  { name: 'Nebulae', count: 10 },
+  { name: 'Black Holes', count: 11 },
+  { name: 'Galaxies', count: 12 },
+  { name: 'Music', count: 7 },
+  { name: 'Cinema', count: 12 },
+  { name: 'Bonus', count: 10 }
+];
 
 export const FlyPage: FC = () => {
 
@@ -67,21 +79,83 @@ export const FlyPage: FC = () => {
             icon={dailyBonusIcon}
           >
             <div className="grid grid-cols-3 gap-4">
+              {/* День 1 */}
               <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
-                <div className="text-2xl font-bold">+1000</div>
-                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium">
+                <div className="text-sm mb-1">DAY 1</div>
+                <div className="text-2xl font-bold">+500</div>
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
                   Claim
                 </button>
               </div>
+              {/* День 2 */}
               <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
-                <div className="text-2xl font-bold">+2000</div>
-                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium">
+                <div className="text-sm mb-1">DAY 2</div>
+                <div className="text-2xl font-bold">+1500</div>
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
                   Claim
                 </button>
               </div>
+              {/* День 3 */}
               <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
+                <div className="text-sm mb-1">DAY 3</div>
                 <div className="text-2xl font-bold">+3000</div>
-                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium">
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
+                  Claim
+                </button>
+              </div>
+              {/* День 4 */}
+              <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
+                <div className="text-sm mb-1">DAY 4</div>
+                <div className="text-2xl font-bold">+5000</div>
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
+                  Claim
+                </button>
+              </div>
+              {/* День 5 */}
+              <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
+                <div className="text-sm mb-1">DAY 5</div>
+                <div className="text-2xl font-bold">+10000</div>
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
+                  Claim
+                </button>
+              </div>
+              {/* День 6 */}
+              <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
+                <div className="text-sm mb-1">DAY 6</div>
+                <div className="text-2xl font-bold">+15000</div>
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
+                  Claim
+                </button>
+              </div>
+              {/* День 7 */}
+              <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
+                <div className="text-sm mb-1">DAY 7</div>
+                <div className="text-2xl font-bold">+20000</div>
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
+                  Claim
+                </button>
+              </div>
+              {/* День 8 */}
+              <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
+                <div className="text-sm mb-1">DAY 8</div>
+                <div className="text-2xl font-bold">+30000</div>
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
+                  Claim
+                </button>
+              </div>
+              {/* День 9 */}
+              <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
+                <div className="text-sm mb-1">DAY 9</div>
+                <div className="text-2xl font-bold">+50000</div>
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
+                  Claim
+                </button>
+              </div>
+              {/* День 10 */}
+              <div className="col-start-2 bg-gray-800 p-4 rounded-lg flex flex-col items-center">
+                <div className="text-sm mb-1">DAY 10</div>
+                <div className="text-2xl font-bold">?</div>
+                <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
                   Claim
                 </button>
               </div>
@@ -94,13 +168,20 @@ export const FlyPage: FC = () => {
             title="NFT Collection"
             icon={nftCollectionIcon}
           >
-            <div className="grid grid-cols-5 gap-2">
-              {Array.from({ length: 100 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="aspect-square bg-gray-800 rounded-lg flex items-center justify-center"
-                >
-                  ?
+            <div className="nft-container">
+              {nftSections.map((section) => (
+                <div key={section.name} className="nft-section">
+                  <h3 className="nft-section-title">{section.name}</h3>
+                  <div className="nft-grid">
+                    {Array.from({ length: section.count }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="nft-item"
+                      >
+                        ?
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>

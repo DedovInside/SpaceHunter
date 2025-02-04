@@ -65,3 +65,8 @@
     height: 90px;
     object-fit: contain;
 }
+
+.boost-card-text {
+  white-space: pre-line;
+  text-align: center;
+}

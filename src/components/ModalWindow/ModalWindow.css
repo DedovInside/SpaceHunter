@@ -34,8 +34,8 @@
 }
 
 .modal-header-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     object-fit: contain;
     position: absolute;
     left: 0;
@@ -56,13 +56,13 @@
     transition: background-color 0.2s;
     margin-left: auto;
     background-color: #4A4A4A;
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 14px;
+    font-size: 17px;
 }
 
 .modal-close-button:hover {
@@ -81,8 +81,8 @@
 }
 
 .modal-icon {
-    width: 64px;
-    height: 64px;
+    width: 75px;
+    height: 75px;
     object-fit: contain;
     margin-bottom: 16px;
 }

@@ -89,7 +89,7 @@ export const BoostPage: FC = () => {
               onClick={() => console.log(`Clicked on ${item.name}`)}
             >
               <img src={item.icon} alt={item.name} className="boost-card-icon" />
-              <span>{item.name}</span>
+              <span className="boost-card-text">{item.name}</span>
             </button>
           ))}
         </div>
