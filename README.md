@@ -8,3 +8,6 @@
 - [@telegram-apps SDK](https://docs.telegram-mini-apps.com/packages/telegram-apps-sdk/2-x)
 - [Telegram UI](https://github.com/Telegram-Mini-Apps/TelegramUI)
 - [Vite](https://vitejs.dev/)
+
+- Ссылка на ТГ бота:
+@space_hunter_game_bot
