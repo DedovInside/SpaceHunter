@@ -136,7 +136,7 @@ export const FlyPage: FC = () => {
                 </button>
               </div>
               {/* День 8 */}
-              <div className="bg-gray-800 p-4 rounded-lg flex flex-col items-center">
+              <div className="bg-gray-600 p-4 rounded-lg flex flex-col items-center">
                 <div className="text-sm mb-1">DAY 8</div>
                 <div className="text-2xl font-bold">+30000</div>
                 <button className="bg-blue-600 text-white p-2 rounded-lg font-medium mt-2">
