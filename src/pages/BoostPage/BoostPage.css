@@ -42,9 +42,9 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     border-radius: 16px;
-    padding: 16px;
+    padding: 0px;
     width: 100%;
-    gap: 16px;
+    gap: 1px;
 }
 
 .boost-card-button {
@@ -55,16 +55,18 @@
     justify-content: center;
     color: white;
     font-size: 8px;
-    padding: 10px 40px;
+    padding: 10px 30px;
     text-align: center;
     line-height: 1.2;
-    gap: 16px;
+    gap: 10px;
     min-height: 130px;
+    border: 2px solid #000000;
+    border-radius: 12px;
 }
 
 .boost-card-icon {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     object-fit: contain;
 }
 
