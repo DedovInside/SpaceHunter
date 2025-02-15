@@ -20,7 +20,9 @@ export const ModalWindow: FC<ModalProps> = ({isOpen, onClose, title, children, i
                 <div className="modal-header">
                     <div className="modal-title-container">
                         {icon && <img src={icon} alt={title} className="modal-header-icon" />}
-                        <h2 className="modal-title">{title}</h2>
+                        <h2 className="modal-title">
+                            {title.includes('\n') ? title : title.replace(' ', '\n')}
+                        </h2>
                     </div>
                     <button
                         onClick={onClose}
