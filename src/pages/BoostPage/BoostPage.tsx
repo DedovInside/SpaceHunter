@@ -4,6 +4,7 @@ import { Page } from '@/components/Page.tsx';
 import { ModalWindow } from '@/components/ModalWindow/ModalWindow';
 
 import './BoostPage.css';
+import BoostPageIcon from '../../components/icons/BoostPageIcon/BoostPageIcon.svg';
 
 // Импортируем иконки для каждого улучшения
 import solarPanelsIcon from '../../../assets/Solar-Panels.png';
@@ -250,7 +251,7 @@ export const BoostPage: FC = () => {
           isOpen={!!selectedBoost}
           onClose={() => setSelectedBoost(null)}
           title={selectedBoost?.name.replace('\n', ' ') || ''}
-          icon={selectedBoost?.icon}
+          icon={BoostPageIcon}
         >
           <div className="boost-modal-content">
             <img src={selectedBoost?.icon} alt={selectedBoost?.name} className="boost-modal-image" />
@@ -260,9 +261,18 @@ export const BoostPage: FC = () => {
                 <p>Level: {selectedBoost?.level}/8</p>
                 {selectedBoost && (
                   <>
-                    <p>Passive Income: +{calculateBoostStats(selectedBoost).income} $KSM/hour</p>
-                    <p>Speed Boost: +{calculateBoostStats(selectedBoost).speed}%</p>
-                    <p>Upgrade Cost: {calculateUpgradeCost(selectedBoost)} $KSM</p>
+                    <p>
+                      Passive Income:
+                      <span>+{calculateBoostStats(selectedBoost).income} $KSM/hour</span>
+                    </p>
+                    <p>
+                      Speed Boost:
+                      <span>+{calculateBoostStats(selectedBoost).speed}%</span>
+                    </p>
+                    <p>
+                      Upgrade Cost:
+                      <span>{calculateUpgradeCost(selectedBoost)} $KSM</span>
+                    </p>
                   </>
                 )}
               </div>

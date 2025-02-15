@@ -23,6 +23,10 @@
     justify-content: space-between;
     padding: 1rem;
     border-bottom: 1px solid #1F0735;
+    position: sticky;
+    top: 0;
+    background-color: #2C1B52;
+    z-index: 10;
 }
 
 .modal-title-container {
@@ -74,7 +78,7 @@
 }
 
 .modal-content {
-    padding: 1rem;
+    padding: 6px;
 }
 
 .modal-content-container {

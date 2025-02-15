@@ -35,7 +35,7 @@
 }
 
 .nft-container {
-    padding: 16px;
+    padding: 8px;
     max-height: 70vh;
     overflow-y: auto;
 }
@@ -54,7 +54,7 @@
 .nft-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 10px;
 }
 
 .nft-item {
