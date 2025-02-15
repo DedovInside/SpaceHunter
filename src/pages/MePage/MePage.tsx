@@ -27,7 +27,7 @@ const friends: Friend[] = [
 
 export const MePage: FC = () => {
   const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "unknown";
-  const inviteLink = `https://t.me/SpaceHunterBot?start=${userId}`;
+  const inviteLink = `https://t.me/space_hunter_game_bot?start=${userId}`;
 
   const copyInviteLink = async () => {
     try {
