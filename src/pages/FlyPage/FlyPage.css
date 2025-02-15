@@ -1,19 +1,19 @@
 .fly-page-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 80px;
-  padding-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 80px;
+    padding-bottom: 80px;
 }
 
 
 .buttons-container {
-  display: flex;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  width: 100%;
-  margin-bottom: 32px;
-  justify-content: center;
+    display: flex;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    width: 100%;
+    margin-bottom: 32px;
+    justify-content: center;
 }
 
 /*.content_button {
@@ -30,40 +30,78 @@
 }*/
 
 .content_button img {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .nft-container {
-  padding: 16px;
-  max-height: 70vh;
-  overflow-y: auto;
+    padding: 16px;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .nft-section {
-  margin-bottom: 24px;
+    margin-bottom: 24px;
 }
 
 .nft-section-title {
-  color: white;
-  font-size: 18px;
-  text-align: center;
-  margin-bottom: 12px;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 12px;
 }
 
 .nft-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
 }
 
 .nft-item {
-  aspect-ratio: 1;
-  background-color: #1F0735;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 24px;
+    aspect-ratio: 1;
+    background-color: #1F0735;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.bonus-day-button {
+    background-color: #1F0735;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+.bonus-day-button:last-child {
+    grid-column-start: 2;
+}
+
+.bonus-icon {
+    width: 32px;
+    height: 32px;
+    margin: 8px 0;
+}
+
+.day-label {
+    font-size: 12px;
+    text-align: center;
+}
+
+.bonus-amount {
+    font-size: 12px;
+}
+
+.big-question-mark {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 8px 0;
 }

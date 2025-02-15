@@ -20,7 +20,7 @@ export function App() {
         >
 
 
-        <PageHeader farmingRate={1000000} onHelpClick={() => alert('Help clicked')}/>
+        <PageHeader farmingRate={10000} onHelpClick={() => alert('Help clicked')}/>
 
         <AppRouter />
         

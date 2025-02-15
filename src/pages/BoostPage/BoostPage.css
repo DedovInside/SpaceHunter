@@ -74,3 +74,57 @@
   white-space: pre-line;
   text-align: center;
 }
+
+.boost-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.boost-modal-image {
+  width: 128px;
+  height: 128px;
+  object-fit: contain;
+}
+
+.boost-modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.boost-description {
+  color: white;
+  text-align: center;
+  font-size: 14px;
+}
+
+.boost-stats {
+  background-color: #1F0735;
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+}
+
+.boost-stats p {
+  margin: 4px 0;
+}
+
+.upgrade-button {
+  background-color: #4A4A4A;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.upgrade-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
