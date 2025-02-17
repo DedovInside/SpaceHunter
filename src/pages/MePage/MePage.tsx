@@ -39,7 +39,7 @@ export const MePage: FC = () => {
   };
 
   const inviteFriend = () => {
-    const message = encodeURIComponent(`Join Space Hunter game! 🚀\n${inviteLink}`);
+    const message = encodeURIComponent(`Join Space Hunter game! 🚀\n`);
     window.Telegram?.WebApp?.openTelegramLink(`https://t.me/share/url?url=${inviteLink}&text=${message}`);
   };
 
