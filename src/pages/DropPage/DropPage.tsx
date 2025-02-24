@@ -1,17 +1,26 @@
 import type { FC } from 'react';
 import { Wallet } from 'lucide-react';
 import { Page } from '@/components/Page.tsx';
+import TONCoinPixel from '../../../assets/TON_Coin_Pixel.png';
+import './DropPage.css';
 
 export const DropPage: FC = () => {
   return (
     <Page back={false}>
-      <div className="pt-20 pb-20 p-4 flex flex-col items-center justify-center">
-        <div className="text-3xl font-bold mb-8">
-          {(1000000).toLocaleString()} Coins
+      <div className="drop-page-container">
+        <div className="coins-container">
+          <div className="balance-title">YOUR BALANCE</div>
+          <div className="balance-value-container">
+            <div className="coins-amount">
+              {(100000000000).toLocaleString()}
+            </div>
+          </div>
         </div>
-
-        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2">
-          <Wallet className="w-5 h-5" />
+        
+        <img src={TONCoinPixel} alt="TON Coin" className="ton-coin-image" />
+        
+        <button className="connect-wallet-button">
+          <Wallet className="wallet-icon" />
           Connect TON Wallet
         </button>
       </div>
