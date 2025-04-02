@@ -60,6 +60,7 @@
 .modal-close-button {
     padding: 0.5rem;
     border-radius: 50%;
+    border: 2px solid black;
     transition: background-color 0.2s;
     background-color: #4A4A4A;
     width: 38px;
