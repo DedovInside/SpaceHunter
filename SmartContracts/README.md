@@ -1,4 +1,4 @@
-# Counter
+# SmartContracts
 
 ## Project structure
 
