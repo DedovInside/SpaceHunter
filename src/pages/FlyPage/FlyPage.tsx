@@ -13,6 +13,15 @@ import yourLevelIcon from '../../../assets/Your_Level_Modal_Icon.png';
 import DropPageIcon from '../../components/icons/DropPageIcon/DropPageIcon.svg';
 
 
+//import ImperialDestroyer from '../../../assets/Imperial_Destroyer_Pixel_Art.png';
+//import Vostok from '../../../assets/Vostok_Pixel_Art.png';
+//import Starship from '../../../assets/Starship_Pixel_Art.png';
+//import SpaceShuttle from '../../../assets/Space_Shuttle_Pixel_Art.png';
+//import MilleniumFalcon from '../../../assets/Millenium_Falcon_Pixel_Art.png';
+import EnergiaBuran from '../../../assets/Energia_Buran_Pixel_Art.png';
+//import Angara from '../../../assets/Angara_Pixel_Art.png';
+
+
 import './FlyPage.css';
 
 const nftSections = [
@@ -65,12 +74,12 @@ export const FlyPage: FC = () => {
 
                 <button
                     onClick={() => setClicks(c => c + 1)}
-                    className="mt-12 transform active:scale-280 transition-transform scale-280"
+                    className="mt-12 ship-button"
                 >
                     <img
-                        src="https://images.unsplash.com/photo-1636819488524-1f019c4e1c44?auto=format&fit=crop&w=300"
+                        src={EnergiaBuran}
                         alt="Spaceship"
-                        className="w-32 h-32 object-contain"
+                        className="w-80 h-50 object-contain"
                     />
                 </button>
 

@@ -5,114 +5,114 @@
     padding: 70px 16px 50px 16px;
     gap: 24px;
     overflow: hidden;
-  }
+}
   
-  .invite-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .invite-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    background-color: #2C1B52;
-    color: white;
-    border-radius: 12px;
-    border: 2px solid black;
-    font-size: 14px;
-    transition: opacity 0.2s;
-  }
-  
-  .invite-button:active {
-    opacity: 0.7;
-  }
-  
-  .friends-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    overflow: hidden;
-  }
-  
-  .friends-title {
-    color: white;
-    font-size: 16px;
-    text-align: center;
-  }
-  
-  .friends-list-container {
-    flex: 1;
-    background-color: #2C1B52;
-    border-radius: 16px;
-    border: 2px solid black;
-    padding: 16px;
-    overflow: hidden;
-    margin-bottom: 60px;
-  }
-  
-  .friends-list {
-    height: 100%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-right: 8px;
-  }
-  
-  .friend-item {
-    background-color: #1F0735;
-    border-radius: 12px;
-    border: 2px solid black;
-    padding: 12px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    position: relative;
-  }
-  
-  .friend-avatar-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  .friend-avatar {
-    width: 40px;
-    height: 40px;
-    background-color: #2C1B52;
-    border-radius: 50%;
-  }
-  
-  .friend-name {
-    color: white;
-    font-size: 12px;
-  }
-  
-  .friend-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .friend-coins {
-    color: white;
-    font-size: 10px;
-  }
-  
-  .friend-nfts {
-    color: #FFD700;
-    font-size: 12px;
-  }
-  
-  .friend-position {
-    color: white;
-    font-size: 12px;
-    min-width: 20px;
-    padding-top: 10px;
-  }
+.invite-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.invite-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #2C1B52;
+  color: white;
+  border-radius: 12px;
+  border: 2px solid black;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+.invite-button:active {
+  opacity: 0.7;
+}
+
+.friends-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.friends-title {
+  color: white;
+  font-size: 16px;
+  text-align: center;
+}
+
+.friends-list-container {
+  flex: 1;
+  background-color: #2C1B52;
+  border-radius: 16px;
+  border: 2px solid black;
+  padding: 16px;
+  overflow: hidden;
+  margin-bottom: 60px;
+}
+
+.friends-list {
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 8px;
+}
+
+.friend-item {
+  background-color: #1F0735;
+  border-radius: 12px;
+  border: 2px solid black;
+  padding: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+}
+
+.friend-avatar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.friend-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #2C1B52;
+  border-radius: 50%;
+}
+
+.friend-name {
+  color: white;
+  font-size: 12px;
+}
+
+.friend-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.friend-coins {
+  color: white;
+  font-size: 10px;
+}
+
+.friend-nfts {
+  color: #FFD700;
+  font-size: 12px;
+}
+
+.friend-position {
+  color: white;
+  font-size: 12px;
+  min-width: 20px;
+  padding-top: 10px;
+}
