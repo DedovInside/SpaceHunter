@@ -69,7 +69,7 @@ export const FlyPage: FC = () => {
                 </div>
 
                 <div className="text-2xl text-white font-bold mb-8">
-                    {clicks} $KSM
+                    {clicks} CSM
                 </div>
 
                 <button
