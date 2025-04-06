@@ -1,32 +1,32 @@
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { Cell, toNano } from '@ton/core';
-import { Course } from '../wrappers/Course';
+import { JettonWallet } from '../wrappers/JettonWallet';
 import '@ton/test-utils';
 import { compile } from '@ton/blueprint';
 
-describe('Course', () => {
+describe('JettonWallet', () => {
     let code: Cell;
 
     beforeAll(async () => {
-        code = await compile('Course');
+        code = await compile('JettonWallet');
     });
 
     let blockchain: Blockchain;
     let deployer: SandboxContract<TreasuryContract>;
-    let course: SandboxContract<Course>;
+    let jettonWallet: SandboxContract<JettonWallet>;
 
     beforeEach(async () => {
         blockchain = await Blockchain.create();
 
-        course = blockchain.openContract(Course.createFromConfig({}, code));
+        jettonWallet = blockchain.openContract(JettonWallet.createFromConfig({}, code));
 
         deployer = await blockchain.treasury('deployer');
 
-        const deployResult = await course.sendDeploy(deployer.getSender(), toNano('0.05'));
+        const deployResult = await jettonWallet.sendDeploy(deployer.getSender(), toNano('0.05'));
 
         expect(deployResult.transactions).toHaveTransaction({
             from: deployer.address,
-            to: course.address,
+            to: jettonWallet.address,
             deploy: true,
             success: true,
         });
@@ -34,6 +34,6 @@ describe('Course', () => {
 
     it('should deploy', async () => {
         // the check is done inside beforeEach
-        // blockchain and course are ready to use
+        // blockchain and jettonWallet are ready to use
     });
 });
