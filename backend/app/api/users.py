@@ -1,28 +1,38 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from app import crud, schemas
-from app.database import SessionLocal
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.crud.user import get_user_by_telegram_id, create_user
+from app.schemas.user import User, UserCreate
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["Users"])
 
-# Dependency
+
+# Dependency для получения сессии базы данных
 def get_db():
-    db = SessionLocal()
+    db = AsyncSession()
     try:
         yield db
     finally:
         db.close()
 
-@router.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_username(db, username=user.username)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Username already registered")
-    return crud.create_user(db=db, user=user)
 
-@router.get("/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
-    if db_user is None:
+# Эндпоинт для регистрации пользователя (при первом заходе в игру)
+@router.post("/register", response_model=User)
+async def register_user(user_create: UserCreate, db: AsyncSession = Depends(get_db)):
+    # Проверяем, существует ли уже пользователь с таким telegram_id
+    existing_user = await get_user_by_telegram_id(db, user_create.telegram_id)
+
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User already exists")
+
+    # Если не существует, создаем нового пользователя
+    new_user = await create_user(db, user_create)
+    return new_user
+
+
+# Эндпоинт для получения пользователя по telegram_id
+@router.get("/{telegram_id}", response_model=User)
+async def get_user(telegram_id: int, db: AsyncSession = Depends(get_db)):
+    user = await get_user_by_telegram_id(db, telegram_id)
+    if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+    return user
