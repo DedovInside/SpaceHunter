@@ -20,7 +20,7 @@ export function App() {
         >
 
 
-        <PageHeader farmingRate={10000}/>
+        <PageHeader farmingRate={100}/>
 
         <AppRouter />
         

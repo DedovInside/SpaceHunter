@@ -8,13 +8,11 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
-    z-index: 50;
 }
 
 .user-info {
     display: flex;
     align-items: center;
-    gap: 12px;
 }
 
 .avatar-container {
@@ -42,9 +40,14 @@
     border-radius: 999px;
     border: 2px solid black;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 16px; /* Одинаковые отступы с обеих сторон */
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
-    display: inline-block;
-    min-width: min-content;
 }
 
 .help-button {

@@ -12,7 +12,7 @@ export const DropPage: FC = () => {
           <div className="balance-title">YOUR BALANCE</div>
           <div className="balance-value-container">
             <div className="coins-amount">
-              {(9007199254740991).toLocaleString()}
+              {(900744739827434).toLocaleString()}
             </div>
           </div>
         </div>
