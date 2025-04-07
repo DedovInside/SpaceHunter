@@ -12,15 +12,14 @@ import yourLevelIcon from '../../../assets/Your_Level_Modal_Icon.png';
 
 import DropPageIcon from '../../components/icons/DropPageIcon/DropPageIcon.svg';
 
-
-//import ImperialDestroyer from '../../../assets/Imperial_Destroyer_Pixel_Art.png';
-//import Vostok from '../../../assets/Vostok_Pixel_Art.png';
-//import Starship from '../../../assets/Starship_Pixel_Art.png';
-//import SpaceShuttle from '../../../assets/Space_Shuttle_Pixel_Art.png';
-//import MilleniumFalcon from '../../../assets/Millenium_Falcon_Pixel_Art.png';
+// Импортируем все корабли
+import ImperialDestroyer from '../../../assets/Imperial_Destroyer_Pixel_Art.png';
+import Vostok from '../../../assets/Vostok_Pixel_Art.png';
+import Starship from '../../../assets/Starship_Pixel_Art.png';
+import SpaceShuttle from '../../../assets/Space_Shuttle_Pixel_Art.png';
+import MilleniumFalcon from '../../../assets/Millenium_Falcon_Pixel_Art.png';
 import EnergiaBuran from '../../../assets/Energia_Buran_Pixel_Art.png';
-//import Angara from '../../../assets/Angara_Pixel_Art.png';
-
+import Angara from '../../../assets/Angara_Pixel_Art.png';
 
 import './FlyPage.css';
 
@@ -38,11 +37,72 @@ const nftSections = [
 ];
 
 export const FlyPage: FC = () => {
-
+    // Уровни и опыт
+    const [level, setLevel] = useState(1);
+    const [currentExp, setCurrentExp] = useState(0);
     const [clicks, setClicks] = useState(0);
+
+    // Опыт для каждого уровня
+    const expPerLevel = [0, 10, 20, 30, 40, 50, 60, 70];
+    const maxLevel = expPerLevel.length - 1;
+
+    // Получаем текущий необходимый опыт для уровня
+    const getLevelTargetExp = () => {
+        if (level >= maxLevel) {
+            return expPerLevel[maxLevel - 1]; // Для последнего уровня берем его значение
+        }
+        return expPerLevel[level]; // Для остальных берем значение следующего уровня
+    };
+
+    // Рассчитываем процент заполнения полосы
+    const getProgressPercent = () => {
+        if (level >= maxLevel) {
+            return 100; // На последнем уровне шкала всегда заполнена
+        }
+
+        const prevLevelExp = expPerLevel[level - 1];
+        const nextLevelExp = expPerLevel[level];
+        const levelRange = nextLevelExp - prevLevelExp;
+        const currentLevelProgress = currentExp - prevLevelExp;
+
+        return (currentLevelProgress / levelRange) * 100;
+    };
+
     const [showBonusModal, setShowBonusModal] = useState(false);
     const [showNFTModal, setShowNFTModal] = useState(false);
     const [showLevelModal, setShowLevelModal] = useState(false);
+
+    // Массив кораблей по уровням
+    const ships = [
+        Vostok,           // Уровень 1
+        SpaceShuttle,     // Уровень 2
+        Angara,           // Уровень 3
+        Starship,         // Уровень 4
+        EnergiaBuran,     // Уровень 5
+        MilleniumFalcon,  // Уровень 6
+        ImperialDestroyer // Уровень 7
+    ];
+
+    // Получаем текущий корабль по уровню
+    const getCurrentShip = () => ships[level - 1] || ships[ships.length - 1];
+
+    // Получаем следующий корабль
+    const getNextShip = () => level < ships.length ? ships[level] : ships[ships.length - 1];
+
+    // Функция обработки нажатия на корабль
+    const handleShipClick = () => {
+        const newClicks = clicks + 1;
+        setClicks(newClicks);
+
+        // Обновляем опыт
+        const newExp = currentExp + 1;
+        setCurrentExp(newExp);
+
+        // Проверяем, достигли ли мы следующего уровня
+        if (level < maxLevel && newExp >= expPerLevel[level]) {
+            setLevel(level + 1);
+        }
+    };
 
     return (
         <Page back={false}>
@@ -73,16 +133,15 @@ export const FlyPage: FC = () => {
                 </div>
 
                 <button
-                    onClick={() => setClicks(c => c + 1)}
+                    onClick={handleShipClick}
                     className="mt-12 ship-button"
                 >
                     <img
-                        src={EnergiaBuran}
+                        src={getCurrentShip()}
                         alt="Spaceship"
                         className="w-80 h-50 object-contain"
                     />
                 </button>
-
 
                 <ModalWindow
                     isOpen={showBonusModal}
@@ -184,7 +243,32 @@ export const FlyPage: FC = () => {
                     title="Level Progress"
                     icon={yourLevelIcon}
                 >
-                    <div>Content</div>
+                    <div className="level-modal-content">
+                        <div className="current-level-container">
+                            <div className="level-box">{level}</div>
+                            <div className="level-label">УРОВЕНЬ</div>
+                        </div>
+
+                        <div className="level-progress-container">
+                            <div className="level-progress-bar-container">
+                                <div
+                                    className="level-progress-bar-fill"
+                                    style={{ width: `${getProgressPercent()}%` }}
+                                >
+                                </div>
+                                <div className="level-progress-text">
+                                    {currentExp} / {getLevelTargetExp()}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="next-ship-container">
+                            <h3 className="next-ship-title">Следующий корабль</h3>
+                            <div className="next-ship-image-container">
+                                <img src={getNextShip()} alt="Next Ship" className="next-ship-image" />
+                            </div>
+                        </div>
+                    </div>
                 </ModalWindow>
             </div>
         </Page>
