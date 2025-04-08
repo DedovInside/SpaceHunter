@@ -3,6 +3,13 @@ venv/
 .env/
 .env
 
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
 # Alembic configuration
 alembic.ini
 
