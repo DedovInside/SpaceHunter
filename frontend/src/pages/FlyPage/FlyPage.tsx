@@ -1,5 +1,6 @@
 import {ModalWindow} from '@/components/ModalWindow/ModalWindow';
 import {FC, useState} from 'react';
+import { gameApi } from '@/services/api';
 import {Page} from '@/components/Page.tsx';
 
 import NFTCollectionIcon from '../../components/icons/NFTCollectionIcon/NFTCollectionIcon.svg';
@@ -38,6 +39,9 @@ const nftSections = [
 
 export const FlyPage: FC = () => {
     // Уровни и опыт
+
+    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 0;
+
     const [level, setLevel] = useState(1);
     const [currentExp, setCurrentExp] = useState(0);
     const [clicks, setClicks] = useState(0);
@@ -90,17 +94,26 @@ export const FlyPage: FC = () => {
     const getNextShip = () => level < ships.length ? ships[level] : ships[ships.length - 1];
 
     // Функция обработки нажатия на корабль
-    const handleShipClick = () => {
-        const newClicks = clicks + 1;
-        setClicks(newClicks);
-
-        // Обновляем опыт
-        const newExp = currentExp + 1;
-        setCurrentExp(newExp);
-
-        // Проверяем, достигли ли мы следующего уровня
-        if (level < maxLevel && newExp >= expPerLevel[level]) {
-            setLevel(level + 1);
+    const handleShipClick = async () => {
+        try {
+            // Вызываем API и получаем обновленные данные
+            const result = await gameApi.click(userId);
+            
+            // Обновляем состояние из ответа API
+            setClicks(result.balance || clicks + 1);
+            
+            // Обновляем опыт
+            const newExp = currentExp + 1;
+            setCurrentExp(newExp);
+            
+            // Проверяем, достигли ли мы следующего уровня
+            if (level < maxLevel && newExp >= expPerLevel[level]) {
+                setLevel(level + 1);
+            }
+        } catch (error) {
+            console.error('Error clicking:', error);
+            // Для неидеального UX: при ошибке всё равно инкрементируем счетчик
+            setClicks(clicks + 1);
         }
     };
 

@@ -1,0 +1,1 @@
+{"version":3,"file":"alignment.d.ts","sourceRoot":"","sources":["../../../../../../src/components/Overlays/Popper/hooks/helpers/alignment.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,wBAAwB,CAAC;AAEnD,OAAO,EAAE,iBAAiB,EAAE,iBAAiB,EAAE,MAAM,UAAU,CAAC;AAEhE,eAAO,MAAM,kBAAkB,cAAe,iBAAiB,2BAE9D,CAAC;AAEF,eAAO,MAAM,yBAAyB,cAAe,iBAAiB,KAAG,OAAO,GAAG,KAAK,GAAG,IAG1F,CAAC"}

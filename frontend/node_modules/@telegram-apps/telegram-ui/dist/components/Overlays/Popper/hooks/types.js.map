@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../../src/components/Overlays/Popper/hooks/types.ts"],"sourcesContent":["import type { Placement } from '@floating-ui/react-dom';\n\nexport type AutoPlacementType = 'auto' | 'auto-start' | 'auto-end';\n\nexport type PlacementWithAuto = AutoPlacementType | Placement;\n"],"names":[],"mappings":"AAIA,WAA8D"}

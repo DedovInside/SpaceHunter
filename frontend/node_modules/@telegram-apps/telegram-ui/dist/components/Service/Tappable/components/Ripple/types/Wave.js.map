@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../../../../src/components/Service/Tappable/components/Ripple/types/Wave.ts"],"sourcesContent":["export interface Wave {\n  x: number;\n  y: number;\n  date: number;\n  pointerId: number;\n}\n"],"names":[],"mappings":"AAAA,WAKC"}

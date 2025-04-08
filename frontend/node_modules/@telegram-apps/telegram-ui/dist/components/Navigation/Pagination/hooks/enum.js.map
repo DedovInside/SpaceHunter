@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../../src/components/Navigation/Pagination/hooks/enum.ts"],"sourcesContent":["export enum PaginationType {\n  Page = 'page',\n  Next = 'next',\n  Previous = 'previous',\n  StartEllipsis = 'start-ellipsis',\n  EndEllipsis = 'end-ellipsis',\n}\n"],"names":["PaginationType"],"mappings":";UAAYA;;;;;;GAAAA,mBAAAA"}

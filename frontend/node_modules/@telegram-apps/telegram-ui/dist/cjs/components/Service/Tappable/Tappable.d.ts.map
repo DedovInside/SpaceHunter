@@ -1,0 +1,1 @@
+{"version":3,"file":"Tappable.d.ts","sourceRoot":"","sources":["../../../../../src/components/Service/Tappable/Tappable.tsx"],"names":[],"mappings":"AAEA,OAAO,EAAE,iBAAiB,EAAE,WAAW,EAAc,MAAM,OAAO,CAAC;AASnE,MAAM,WAAW,aAAc,SAAQ,iBAAiB,CAAC,WAAW,CAAC;IACnE,eAAe;IACf,SAAS,CAAC,EAAE,WAAW,CAAC;IACxB,oBAAoB,CAAC,EAAE,SAAS,GAAG,YAAY,CAAC;CACjD;AAED,eAAO,MAAM,QAAQ,mGA8BnB,CAAC"}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/types/Icon.ts"],"sourcesContent":["import { SVGProps } from 'react';\n\nexport interface Icon extends SVGProps<SVGSVGElement> {\n  title?: string\n}\n"],"names":[],"mappings":"AAEA,WAEC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"Steps.d.ts","sourceRoot":"","sources":["../../../../src/components/Blocks/Steps/Steps.tsx"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,OAAO,CAAC;AAKvC,MAAM,WAAW,UAAW,SAAQ,cAAc,CAAC,cAAc,CAAC;IAChE,6BAA6B;IAC7B,KAAK,EAAE,MAAM,CAAC;IACd,qHAAqH;IACrH,QAAQ,EAAE,MAAM,CAAC;CAClB;AAED;;;GAGG;AACH,eAAO,MAAM,KAAK,mCAAoC,UAAU,gBAW/D,CAAC"}
