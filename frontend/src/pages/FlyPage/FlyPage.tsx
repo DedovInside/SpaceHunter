@@ -1,6 +1,10 @@
 import {ModalWindow} from '@/components/ModalWindow/ModalWindow';
 import {FC, useState} from 'react';
 import { gameApi } from '@/services/api';
+
+
+
+
 import {Page} from '@/components/Page.tsx';
 
 import NFTCollectionIcon from '../../components/icons/NFTCollectionIcon/NFTCollectionIcon.svg';
@@ -114,7 +118,8 @@ export const FlyPage: FC = () => {
             console.error('Error clicking:', error);
             // Для неидеального UX: при ошибке всё равно инкрементируем счетчик
             setClicks(clicks + 1);
-        }
+        } 
+        
     };
 
     return (

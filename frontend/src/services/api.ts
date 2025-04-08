@@ -2,21 +2,28 @@ import axios, { AxiosResponse } from 'axios';
 
 // Создаем инстанс axios с базовыми настройками
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'http://localhost:8000/api', // Базовый URL для API
   headers: {
     'Content-Type': 'application/json',
-  }
+  },
 });
 
 // Интерцептор для обработки ответов и извлечения данных
 api.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   error => {
-    console.error('API Error:', error.response?.data || error.message);
+    // Добавляем более подробный вывод ошибки
+    console.error('API Error:', {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      url: error.config?.url,
+      method: error.config?.method,
+    });
     return Promise.reject(error.response?.data || error);
   }
 );
-
+ 
 // Типы для ответов API
 interface GameClickResponse {
   message: string;
@@ -55,7 +62,7 @@ export const boostApi = {
   buyBoost: (telegramId: number | string, boostId: number) => 
     api.post('/boosts/buy', { telegram_id: telegramId, boost_id: boostId }),
 };
-
+ 
 export const userApi = {
   // Получение информации о пользователе
   getUser: (telegramId: number | string) => api.get(`/users/${telegramId}`),

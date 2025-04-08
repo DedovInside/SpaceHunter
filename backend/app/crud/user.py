@@ -10,8 +10,24 @@ INVITED_BONUS = 50
 
 
 async def create_user(db: AsyncSession, user: UserCreate):
+    # Создаем пользователя
     db_user = User(telegram_id=user.telegram_id, username=user.username)
     db.add(db_user)
+    
+    # Нужно выполнить flush чтобы получить ID пользователя
+    await db.flush()
+    
+    # Создаем игровое состояние для нового пользователя
+    game_state = GameState(
+        user_id=db_user.id,
+        balance=0,
+        level=1,
+        score=0,
+        energy=100,
+        boost_multiplier=1.0
+    )
+    db.add(game_state)
+    
     await db.commit()
     await db.refresh(db_user)
     return db_user
@@ -51,13 +67,14 @@ async def create_user_with_referral(telegram_id: int, username: str, ref_id: int
 
 
 async def get_user_by_telegram_id(db: AsyncSession, telegram_id: int):
-    async with db() as session:
-        result = await session.execute(select(User).filter(User.telegram_id == telegram_id))
-        return result.scalars().first()
+    # db уже является сессией, не нужно создавать новую
+    result = await db.execute(select(User).filter(User.telegram_id == telegram_id))
+    return result.scalar_one_or_none()  # scalar_one_or_none более современный метод
 
 
 async def update_user_balance(db: AsyncSession, telegram_id: int, balance: float):
-    db_user = db.query(User).filter(User.telegram_id == telegram_id).first()
+    result = await db.execute(select(User).filter(User.telegram_id == telegram_id))
+    db_user = result.scalar_one_or_none()
     if db_user:
         db_user.balance = balance
         await db.commit()
