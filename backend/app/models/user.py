@@ -24,3 +24,5 @@ class User(Base):
         backref=backref("referrer", remote_side=[id]),
         cascade="all, delete",
     )
+    daily_bonus = relationship("UserDailyBonus", back_populates="user", uselist=False)
+

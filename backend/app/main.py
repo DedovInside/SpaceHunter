@@ -21,7 +21,7 @@ app.include_router(boosts.router, prefix="/api")
 app.include_router(game.router, prefix="/api/game")
 app.include_router(tasks.router, prefix="/api")
 app.include_router(rating.router, prefix="/api")
-# Глобальный список фоновых тасков
+# Глобальный список фоновых тасковx
 background_tasks = []
 
 
