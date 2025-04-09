@@ -43,6 +43,30 @@ interface GameStateResponse {
   boost_multiplier: number;
 }
 
+interface Boost {
+  boost_id: number;
+  name: string;
+  category: string;
+  description: string;
+  icon_name: string;
+  passive_income: number;
+  click_multiplier: number;
+  level: number;
+  max_level: number;
+  current_cost: number;
+}
+
+interface UpgradeBoostResponse {
+  boost_id: number;
+  name: string;
+  level: number;
+  max_level: number;
+  new_balance: number;
+  new_cost: number;
+  new_passive_income: number;
+  new_click_multiplier: number;
+}
+
 // API методы сгруппированы по функциональности
 export const gameApi = {
   // Обработка клика (в FlyPage)
@@ -55,12 +79,16 @@ export const gameApi = {
 };
 
 export const boostApi = {
-  // Получение всех доступных бустов
-  getBoosts: () => api.get('/boosts'),
+  // Получение всех бустов для пользователя
+  getUserBoosts: (telegramId: number | string) => 
+    api.get<any, Boost[]>(`/boosts/user/${telegramId}`),
   
-  // Покупка буста
-  buyBoost: (telegramId: number | string, boostId: number) => 
-    api.post('/boosts/buy', { telegram_id: telegramId, boost_id: boostId }),
+  // Улучшение буста
+  upgradeBoost: (telegramId: number | string, boostId: number) => 
+    api.post<any, UpgradeBoostResponse>('/boosts/upgrade', { 
+      telegram_id: telegramId, 
+      boost_id: boostId 
+    }),
 };
  
 export const userApi = {

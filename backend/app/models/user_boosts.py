@@ -9,7 +9,7 @@ class UserBoost(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     boost_id = Column(Integer, ForeignKey("boosts.id"))
-    quantity = Column(Integer, default=1)  # Количество купленных бустов
+    level = Column(Integer, default=0)  # Текущий уровень буста у пользователя
 
     user = relationship("User", back_populates="boosts")
     boost = relationship("Boost", back_populates="users")
