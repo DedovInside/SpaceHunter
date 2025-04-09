@@ -8,8 +8,7 @@ import { NavigationBar } from '@/components/NavigationBar/NavigationBar.tsx';
 import { Spinner } from '@/components/Spinner/Spinner.tsx';
 import { AppRouter } from "@/navigation/AppRouter.tsx";
 import { authService } from '@/services/auth';
-
-import axios, { AxiosResponse } from 'axios';
+import { gameApi } from '@/services/api';
 
 interface AuthWrapperProps {
   children: ReactNode;
@@ -20,36 +19,47 @@ function AuthWrapper({ children }: AuthWrapperProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  // В файле App.tsx, в компоненте AuthWrapper
-useEffect(() => {
-  const initAuth = async () => {
-    try {
-      setIsLoading(true);
-      const success = await authService.initializeUser();
-      
-      setIsAuthenticated(success);
-      
-      // Если аутентификация успешна, перенаправляем на главную страницу
-      if (success) {
-        // Проверяем текущий URL
-        const currentPath = window.location.pathname;
-        // Перенаправляем только если находимся на странице ошибки или на корневом URL
-        if (currentPath === '/SpaceHunter/error' || currentPath === '/' || currentPath === '/SpaceHunter/') {
-          navigate('/SpaceHunter/fly');
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        setIsLoading(true);
+        const success = await authService.initializeUser();
+        
+        setIsAuthenticated(success);
+        
+        if (success) {
+          // Apply returning income when user comes back to the app
+          try {
+            const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 99281932;
+            const result = await gameApi.applyReturningIncome(userId);
+            
+            // Show notification if income was collected
+            if (result.applied_income > 0) {
+              console.log(`Welcome back! You collected ${result.applied_income} CSM while away.`);
+              // You could add a toast notification here
+            }
+          } catch (passiveError) {
+            console.error('Error applying returning income:', passiveError);
+          }
+          
+          // Redirect to main page if needed
+          const currentPath = window.location.pathname;
+          if (currentPath === '/SpaceHunter/error' || currentPath === '/' || currentPath === '/SpaceHunter/') {
+            navigate('/SpaceHunter/fly');
+          }
+        } else {
+          navigate('/SpaceHunter/error');
         }
-      } else {
+      } catch (error) {
+        console.error('Auth initialization error:', error);
         navigate('/SpaceHunter/error');
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Auth initialization error:', error);
-      navigate('/SpaceHunter/error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  initAuth();
-}, [navigate]);
+    };
+  
+    initAuth();
+  }, [navigate]);
 
   if (isLoading) {
     return (
@@ -60,14 +70,6 @@ useEffect(() => {
   }
 
   return isAuthenticated ? <>{children}</> : null;
-  /*var response = axios.get("http://localhost:8000/");
-  response.then(function (res: AxiosResponse) {
-    console.log(res.data);
-  }).catch(function (error) {
-    console.error(error);
-  });
-
-  return null;*/
 }
 
 export function App() {
@@ -81,7 +83,7 @@ export function App() {
         platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
       >
         <AuthWrapper>
-          <PageHeader farmingRate={100}/>
+          <PageHeader />
           <AppRouter />
           <NavigationBar />
         </AuthWrapper>
@@ -89,36 +91,3 @@ export function App() {
     </BrowserRouter>
   );
 }
-
-
-/*import { useLaunchParams, miniApp, useSignal } from '@telegram-apps/sdk-react';
-import { AppRoot } from '@telegram-apps/telegram-ui';
-
-import { PageHeader } from '@/components/PageHeader/PageHeader.tsx';
-import { NavigationBar } from '@/components/NavigationBar/NavigationBar.tsx';
-
-import {AppRouter} from "@/navigation/AppRouter.tsx";
-import {BrowserRouter} from "react-router-dom";
-
-export function App() {
-  const lp = useLaunchParams();
-  const isDark = useSignal(miniApp.isDark);
-
-
-  return (
-      <BrowserRouter>
-        <AppRoot
-          appearance={isDark ? 'dark' : 'light'}
-          platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
-        >
-
-        <PageHeader farmingRate={100}/>
-
-        <AppRouter />
-        
-        <NavigationBar />
-        </AppRoot>
-      </BrowserRouter>
-  );
-}
-*/

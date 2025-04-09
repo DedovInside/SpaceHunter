@@ -76,6 +76,31 @@ export const gameApi = {
   // Получение состояния игры пользователя
   getGameState: (telegramId: number | string) => 
     api.get<any, GameStateResponse>(`/game/state/${telegramId}`),
+
+
+  // Получение пассивного дохода
+  getPassiveIncome: (telegramId: number | string) => 
+    api.get<any, {
+      passive_income_rate: number,
+      accumulated_income: number,
+      max_accumulation_time: number,
+      time_accumulated: number
+    }>(`/game/passive_income/${telegramId}`),
+
+
+  applyReturningIncome: (telegramId: number | string) => 
+    api.post<any, { 
+      applied_income: number,
+      new_balance: number 
+    }>(`/game/apply_returning_income/${telegramId}`),
+
+
+  // Получение пассивного дохода при нахождении в игре
+  applyPassiveIncome: (telegramId: number | string) => 
+    api.post<any, { 
+      applied_income: number,
+      new_balance: number 
+    }>(`/game/apply_passive_income/${telegramId}`),
 };
 
 export const boostApi = {

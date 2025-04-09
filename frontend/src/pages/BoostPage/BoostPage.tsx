@@ -208,11 +208,11 @@ export const BoostPage: FC = () => {
                   <p>Level: {selectedBoost.level}/{selectedBoost.max_level}</p>
                   <p>
                     Passive Income:
-                    <span>+{selectedBoost.passive_income * (1 + selectedBoost.level * 0.2)} CSM/hour</span>
+                    <span>+{selectedBoost.passive_income * (1.5 ** selectedBoost.level)} CSM/hour</span>
                   </p>
                   <p>
                     Speed Boost:
-                    <span>+{Math.round(selectedBoost.click_multiplier * 20)}%</span>
+                    <span>+{Math.round(selectedBoost.click_multiplier * 20 * (1.5 ** selectedBoost.level))}%</span>
                   </p>
                   {selectedBoost.level < selectedBoost.max_level ? (
                     <p>

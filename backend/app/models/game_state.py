@@ -1,7 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone 
 from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime, func, CheckConstraint
 from sqlalchemy.orm import relationship
 from app.database import Base
+
+
 
 
 class GameState(Base):
@@ -11,12 +13,17 @@ class GameState(Base):
     score = Column(Integer, default=0)
     level = Column(Integer, default=1)
     balance = Column(Integer, default=0)
+
     boost_multiplier = Column(Integer, default=1)  # множитель бонусов
     passive_income = Column(Integer, default=0)  # доход в секунду
+
     energy = Column(Integer, default=100)
-    last_energy_update = Column(DateTime, default=func.now())
-    last_click_at = Column(DateTime, nullable=True)  # Время последнего клика
-    last_income_at = Column(DateTime, default=datetime.utcnow)
+
+    # Метки времени
+    last_energy_update = Column(DateTime, default=datetime.now)
+    last_click_at = Column(DateTime, default=datetime.now)
+    last_income_at = Column(DateTime, default=datetime.now)
+    last_offline_at = Column(DateTime, default=datetime.now)
 
     user = relationship("User", back_populates="game_state")
 

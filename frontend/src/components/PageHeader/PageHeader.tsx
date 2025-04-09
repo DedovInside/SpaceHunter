@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import WebApp from '@twa-dev/sdk';
 import './PageHeader.css';
 import { ModalWindow } from '../ModalWindow/ModalWindow';
+
+import { gameApi } from '../../services/api';
+
 
 
 import FlyPageIcon from '../icons/FlyPageIcon/FlyPageIcon.svg';
@@ -10,20 +13,51 @@ import TasksPageIcon from '../icons/TasksPageIcon/TasksPageIcon.svg';
 import MePageIcon from '../icons/MePageIcon/MePageIcon.svg';
 import DropPageIcon from '../icons/DropPageIcon/DropPageIcon.svg';
 
-interface HeaderProps {
-    farmingRate: number;
-    onHelpClick?: () => void;
-}
 
-export const PageHeader: React.FC<HeaderProps> = ({ farmingRate, onHelpClick }) => {
+export const PageHeader: React.FC = () => {
 
+    const [passiveIncome, setPassiveIncome] = useState(0);
     const [showHelpModal, setShowHelpModal] = useState(false);
+    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 99281932;
 
+    // Загружаем пассивный доход при монтировании
+    useEffect(() => {
+        const fetchPassiveIncome = async () => {
+            try {
+                const data = await gameApi.getPassiveIncome(userId);
+                setPassiveIncome(data.passive_income_rate);
+            } catch (error) {
+                console.error('Error fetching passive income:', error);
+            }
+        };
+    
+        // Загружаем пассивный доход при монтировании
+        fetchPassiveIncome();
+        
+        // Обновляем отображение пассивного дохода каждые 30 секунд
+        const displayIntervalId = setInterval(fetchPassiveIncome, 30000);
+        
+        // Применяем пассивный доход каждую минуту
+        const applyIncomeInterval = setInterval(async () => {
+            try {
+                const result = await gameApi.applyPassiveIncome(userId);
+                if (result?.applied_income > 0) {
+                    console.log(`Passive income applied: +${result.applied_income} CSM`);
+                }
+            } catch (error) {
+                console.error('Error applying passive income:', error);
+            }
+        }, 60000); // 60 секунд = 1 минута
+        
+        // Очищаем оба интервала при размонтировании компонента
+        return () => {
+            clearInterval(displayIntervalId);
+            clearInterval(applyIncomeInterval);
+        };
+    }, [userId]);
+    
     const handleHelpClick = () => {
         setShowHelpModal(true);
-        if (onHelpClick) {
-            onHelpClick();
-        }
     };
 
     return (
@@ -38,7 +72,7 @@ export const PageHeader: React.FC<HeaderProps> = ({ farmingRate, onHelpClick }) 
                         />
                     </div>
                     <div className="farming-rate">
-                        {farmingRate.toLocaleString()} coin/h
+                        {passiveIncome.toLocaleString()} CSM/h
                     </div>
                 </div>
                 <button

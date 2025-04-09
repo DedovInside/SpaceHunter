@@ -32,7 +32,6 @@ export const authService = {
       }
       return true; // Предполагаем, что первая инициализация была успешной
     }
-    
 
     try {
 
@@ -58,6 +57,9 @@ export const authService = {
     } catch (error) {
       console.error('Error initializing user:', error);
       return false;
+    } finally {
+      // Важно! Сбрасываем флаг инициализации в любом случае
+      isInitializing = false;
     }
   },
   
@@ -146,7 +148,7 @@ export const authService = {
     }
   },
   
-  /**
+  /*
    * Проверка, является ли ошибка ошибкой "Не найдено"
    */
   isNotFoundError(error: any): boolean {
