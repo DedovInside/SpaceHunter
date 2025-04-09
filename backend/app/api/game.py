@@ -20,6 +20,7 @@ async def click(telegram_id: int, db: AsyncSession = Depends(get_db)):
         **result
     }
 
+
 @router.get("/state/{telegram_id}")
 async def get_user_game_state(telegram_id: int, db: AsyncSession = Depends(get_db)):
     # Find the user

@@ -105,8 +105,8 @@ async def upgrade_boost(db: AsyncSession, telegram_id: int, boost_id: int):
     
     # Обновляем характеристики пользователя
     game_state.balance -= upgrade_cost
-    game_state.boost_multiplier += boost.click_multiplier * 0.2  # Увеличиваем на 20% от базового значения
-    game_state.passive_income += boost.passive_income * 0.2  # Увеличиваем на 20% от базового значения
+    game_state.boost_multiplier += boost.click_multiplier * 0.2 * (1.5 ** current_level)  # Увеличиваем на 20%, 30%, 45% от базового значения
+    game_state.passive_income += boost.passive_income * (1.5 ** current_level)  # Увеличиваем пассивный доход
     
     await db.commit()
     await db.refresh(game_state)
