@@ -1,9 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import datetime
-
 from sqlalchemy.orm import selectinload
-
 from app.models.user import User
 from app.services.task_checker import check_user_tasks
 
