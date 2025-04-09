@@ -47,7 +47,7 @@ interface GameStateResponse {
 export const gameApi = {
   // Обработка клика (в FlyPage)
   click: (telegramId: number | string) => 
-    api.post<any, GameClickResponse>('/game/click', { telegram_id: telegramId }),
+    api.post<any, GameClickResponse>(`/game/click?telegram_id=${telegramId}`),
   
   // Получение состояния игры пользователя
   getGameState: (telegramId: number | string) => 

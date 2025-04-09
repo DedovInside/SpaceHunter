@@ -1,5 +1,5 @@
 import {ModalWindow} from '@/components/ModalWindow/ModalWindow';
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import { gameApi } from '@/services/api';
 
 
@@ -42,43 +42,95 @@ const nftSections = [
 ];
 
 export const FlyPage: FC = () => {
-    // Уровни и опыт
 
-    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 0;
-
-    const [level, setLevel] = useState(1);
-    const [currentExp, setCurrentExp] = useState(0);
-    const [clicks, setClicks] = useState(0);
-
-    // Опыт для каждого уровня
-    const expPerLevel = [0, 10, 20, 30, 40, 50, 60, 70];
-    const maxLevel = expPerLevel.length - 1;
-
-    // Получаем текущий необходимый опыт для уровня
-    const getLevelTargetExp = () => {
-        if (level >= maxLevel) {
-            return expPerLevel[maxLevel - 1]; // Для последнего уровня берем его значение
-        }
-        return expPerLevel[level]; // Для остальных берем значение следующего уровня
-    };
-
-    // Рассчитываем процент заполнения полосы
-    const getProgressPercent = () => {
-        if (level >= maxLevel) {
-            return 100; // На последнем уровне шкала всегда заполнена
-        }
-
-        const prevLevelExp = expPerLevel[level - 1];
-        const nextLevelExp = expPerLevel[level];
-        const levelRange = nextLevelExp - prevLevelExp;
-        const currentLevelProgress = currentExp - prevLevelExp;
-
-        return (currentLevelProgress / levelRange) * 100;
-    };
-
+    // Состояние для отображения модальных окон
     const [showBonusModal, setShowBonusModal] = useState(false);
     const [showNFTModal, setShowNFTModal] = useState(false);
     const [showLevelModal, setShowLevelModal] = useState(false);
+    
+    // Получаем Id пользователя из Telegram WebApp
+    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 99281932;
+
+    // Состояние игры:
+    const [gameState, setGameState] = useState({
+        balance: 0,
+        level: 1,
+        score: 0,
+        energy: 0,
+        boost_multiplier: 1
+    });
+
+    // Уровни и опыт
+    const [currentExp, setCurrentExp] = useState(0);
+    const [showLevelUpAnimation, setShowLevelUpAnimation] = useState(false);
+
+
+    // Для анимации награды
+    const [showReward, setShowReward] = useState(false);
+    const [reward, setReward] = useState(0);
+
+
+    // Загружаем начальное состояние игры.
+    useEffect(() => {
+        const fetchGameState = async () => {
+            try {
+                // Получаем текущее состояние игры с сервера
+                //console.log("ABOBA 1")
+                const state = await gameApi.getGameState(userId);
+                //console.log("ABOBA 2")
+                setGameState(state);
+                //console.log("ABOBA 3")
+                
+                // Устанавливаем опыт на основе score из gameState
+                setCurrentExp(state.score);
+            } catch (error) {
+                console.error('Error fetching game state:', error);
+            }
+        };
+
+        fetchGameState();
+    }, [userId]);
+
+
+    // Функция обработки нажатия на корабль
+    const handleShipClick = async () => {
+        try {
+            // Анимация нажатия
+            const shipButton = document.querySelector('.ship-button');
+            shipButton?.classList.add('clicked');
+            setTimeout(() => shipButton?.classList.remove('clicked'), 150);
+            
+            // Вызываем API и получаем обновленное состояние игры
+            const result = await gameApi.click(userId);
+            
+            // Показываем анимацию награды
+            setReward(result.reward);
+            setShowReward(true);
+            setTimeout(() => setShowReward(false), 1000);
+            
+            // Обновляем состояние
+            setGameState(prev => ({
+                ...prev,
+                balance: result.new_balance,
+                score: result.new_score,
+                level: result.level
+            }));
+            
+            // Обновляем опыт
+            setCurrentExp(result.new_score);
+            
+            // Если повысился уровень, показываем анимацию
+            if (result.leveled_up) {
+                setShowLevelUpAnimation(true);
+                setTimeout(() => setShowLevelUpAnimation(false), 2000);
+            }
+        } catch (error) {
+            console.error('Error processing click:', error);
+        }
+    };
+
+
+    
 
     // Массив кораблей по уровням
     const ships = [
@@ -92,34 +144,21 @@ export const FlyPage: FC = () => {
     ];
 
     // Получаем текущий корабль по уровню
-    const getCurrentShip = () => ships[level - 1] || ships[ships.length - 1];
+    const getCurrentShip = () => ships[gameState.level - 1] || ships[0];
 
     // Получаем следующий корабль
-    const getNextShip = () => level < ships.length ? ships[level] : ships[ships.length - 1];
+    const getNextShip = () => gameState.level < ships.length ? ships[gameState.level] : ships[ships.length - 1];
 
-    // Функция обработки нажатия на корабль
-    const handleShipClick = async () => {
-        try {
-            // Вызываем API и получаем обновленные данные
-            const result = await gameApi.click(userId);
-            
-            // Обновляем состояние из ответа API
-            setClicks(result.balance || clicks + 1);
-            
-            // Обновляем опыт
-            const newExp = currentExp + 1;
-            setCurrentExp(newExp);
-            
-            // Проверяем, достигли ли мы следующего уровня
-            if (level < maxLevel && newExp >= expPerLevel[level]) {
-                setLevel(level + 1);
-            }
-        } catch (error) {
-            console.error('Error clicking:', error);
-            // Для неидеального UX: при ошибке всё равно инкрементируем счетчик
-            setClicks(clicks + 1);
-        } 
-        
+    // Получаем целевой опыт для текущего уровня
+    const getLevelTargetExp = () => {
+        // Базовая формула из backend: level * 100.0
+        return gameState.level * 100.0;
+    };
+
+    // Получаем процент прогресса уровня
+    const getProgressPercent = () => {
+        const targetExp = getLevelTargetExp();
+        return Math.min(100, (currentExp / targetExp) * 100);
     };
 
     return (
@@ -147,7 +186,7 @@ export const FlyPage: FC = () => {
                 </div>
 
                 <div className="text-2xl text-white font-bold mb-8">
-                    {clicks} CSM
+                    {gameState.balance.toFixed(0)} CSM
                 </div>
 
                 <button
@@ -263,7 +302,7 @@ export const FlyPage: FC = () => {
                 >
                     <div className="level-modal-content">
                         <div className="current-level-container">
-                            <div className="level-box">{level}</div>
+                            <div className="level-box">{gameState.level}</div>
                             <div className="level-label">УРОВЕНЬ</div>
                         </div>
 
@@ -275,7 +314,7 @@ export const FlyPage: FC = () => {
                                 >
                                 </div>
                                 <div className="level-progress-text">
-                                    {currentExp} / {getLevelTargetExp()}
+                                {currentExp.toFixed(1)} / {getLevelTargetExp().toFixed(0)}
                                 </div>
                             </div>
                         </div>

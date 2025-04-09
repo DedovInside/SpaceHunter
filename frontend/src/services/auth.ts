@@ -13,13 +13,31 @@ export interface TelegramUser {
 /**
  * Сервис для авторизации и регистрации пользователей
  */
+
+let isInitializing = false;
+
 export const authService = {
   /**
    * Инициализирует пользователя: проверяет авторизацию и при необходимости регистрирует
    * @returns Promise<boolean> - успешность операции
    */
   async initializeUser(): Promise<boolean> {
+
+    // Предотвращаем параллельные вызовы
+    if (isInitializing) {
+      console.log("Initialization already in progress, waiting...");
+      // Ждем завершения текущей инициализации
+      while (isInitializing) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      return true; // Предполагаем, что первая инициализация была успешной
+    }
+    
+
     try {
+
+      isInitializing = true; // Устанавливаем флаг инициализации
+
       // В режиме разработки добавляем задержку для загрузки мокированных данных
       if (import.meta.env.DEV) {
         await this.waitForMockData();
@@ -47,10 +65,10 @@ export const authService = {
    * Ожидание загрузки мокированных данных в режиме разработки
    */
   async waitForMockData(): Promise<void> {
-    console.log("Waiting for mock data to load...");
+    console.log("Waiting for mock data to load ABOBA...");
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log("Telegram WebApp after waiting:", window.Telegram?.WebApp);
-    console.log("User data after waiting:", window.Telegram?.WebApp?.initDataUnsafe?.user);
+    //console.log("Telegram WebApp after waiting:", window.Telegram?.WebApp);
+    //console.log("User data after waiting:", window.Telegram?.WebApp?.initDataUnsafe?.user);
   },
   
   /**
@@ -81,6 +99,7 @@ export const authService = {
    */
   async registerDevelopmentUser(mockId: number): Promise<boolean> {
     try {
+      console.log('Attempting to register development user with ID:', mockId);
       const newUser = await userApi.registerUser(mockId, `dev_user_${mockId}`);
       console.log('Development user registered:', newUser);
       return true;
@@ -131,9 +150,10 @@ export const authService = {
    * Проверка, является ли ошибка ошибкой "Не найдено"
    */
   isNotFoundError(error: any): boolean {
+    console.log("Error structure:", JSON.stringify(error)); // Добавьте для дебага
     return error && 
       (error.status === 404 || 
-       error.detail === 'Not Found' ||
+       error.detail === 'User not found' || // Измените это условие
        error.message?.includes('Not Found'));
   }
 };

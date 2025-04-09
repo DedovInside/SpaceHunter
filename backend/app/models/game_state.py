@@ -10,10 +10,10 @@ class GameState(Base):
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
     score = Column(Integer, default=0)
     level = Column(Integer, default=1)
-    balance = Column(Float, default=0.0)
-    boost_multiplier = Column(Float, default=1.0)  # множитель бонусов
-    passive_income = Column(Float, default=0.0)  # доход в секунду
-    energy = Column(Float, default=100.0)
+    balance = Column(Integer, default=0)
+    boost_multiplier = Column(Integer, default=1)  # множитель бонусов
+    passive_income = Column(Integer, default=0)  # доход в секунду
+    energy = Column(Integer, default=100)
     last_energy_update = Column(DateTime, default=func.now())
     last_click_at = Column(DateTime, nullable=True)  # Время последнего клика
     last_income_at = Column(DateTime, default=datetime.utcnow)

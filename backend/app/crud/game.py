@@ -8,12 +8,12 @@ from app.models.user import User
 from app.services.task_checker import check_user_tasks
 
 
-def base_click_income(level: int) -> float:
-    return 1.0 + (level - 1) * 0.5
+def base_click_income(level: int) -> int:
+    return 1 + (level - 1)
 
 
-def required_score_for_level(level: int) -> float:
-    return level * 100.0
+def required_score_for_level(level: int) -> int:
+    return level * 100
 
 
 async def process_click(db: AsyncSession, telegram_id: int) -> dict:
@@ -40,14 +40,15 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
     game_state.score += reward
     game_state.balance += reward
     game_state.last_click_at = datetime.utcnow()
-    game_state.energy -= 1
+    #game_state.energy -= 1
+    
     # Проверяем, можно ли повысить уровень
     required_score = required_score_for_level(game_state.level)
     leveled_up = False
 
     if game_state.score >= required_score:
         game_state.level += 1
-        game_state.score = 0.0
+        game_state.score = 0
         leveled_up = True
 
     await db.commit()

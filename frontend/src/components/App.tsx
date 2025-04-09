@@ -20,28 +20,36 @@ function AuthWrapper({ children }: AuthWrapperProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        setIsLoading(true);
-        const success = await authService.initializeUser();
-        
-        setIsAuthenticated(success);
-        
-        // Если аутентификация не удалась, показываем страницу ошибки
-        if (!success) {
-          navigate('/SpaceHunter/error');
+  // В файле App.tsx, в компоненте AuthWrapper
+useEffect(() => {
+  const initAuth = async () => {
+    try {
+      setIsLoading(true);
+      const success = await authService.initializeUser();
+      
+      setIsAuthenticated(success);
+      
+      // Если аутентификация успешна, перенаправляем на главную страницу
+      if (success) {
+        // Проверяем текущий URL
+        const currentPath = window.location.pathname;
+        // Перенаправляем только если находимся на странице ошибки или на корневом URL
+        if (currentPath === '/SpaceHunter/error' || currentPath === '/' || currentPath === '/SpaceHunter/') {
+          navigate('/SpaceHunter/fly');
         }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
+      } else {
         navigate('/SpaceHunter/error');
-      } finally {
-        setIsLoading(false);
       }
-    };
+    } catch (error) {
+      console.error('Auth initialization error:', error);
+      navigate('/SpaceHunter/error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    initAuth();
-  }, [navigate]);
+  initAuth();
+}, [navigate]);
 
   if (isLoading) {
     return (
@@ -52,7 +60,6 @@ function AuthWrapper({ children }: AuthWrapperProps) {
   }
 
   return isAuthenticated ? <>{children}</> : null;
-
   /*var response = axios.get("http://localhost:8000/");
   response.then(function (res: AxiosResponse) {
     console.log(res.data);

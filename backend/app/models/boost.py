@@ -8,10 +8,10 @@ class Boost(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    click_multiplier = Column(Float, default=1.0)  # Увеличивает доход от клика
-    passive_income = Column(Float, default=0.0)  # Увеличивает пассивный доход
+    click_multiplier = Column(Integer, default=1)  # Увеличивает доход от клика
+    passive_income = Column(Integer, default=0)  # Увеличивает пассивный доход
     level = Column(Integer, default=1)  # Можно улучшать
-    cost = Column(Float, default=100.0)  # Стоимость следующего уровня
+    cost = Column(Integer, default=100)  # Стоимость следующего уровня
 
     users = relationship("UserBoost", back_populates="boost")
 
