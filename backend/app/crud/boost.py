@@ -91,7 +91,9 @@ async def upgrade_boost(db: AsyncSession, telegram_id: int, boost_id: int):
     
     # Рассчитываем стоимость апгрейда
     upgrade_cost = boost.base_cost * (1.5 ** current_level)
-    
+    upgrade_click_multiplier = boost.click_multiplier * 0.2 * (1.5 ** current_level)
+    upgrade_passive_income = boost.passive_income * (1.5 ** current_level)
+
     # Проверяем хватает ли баланса
     if game_state.balance < upgrade_cost:
         return {"error": "Not enough balance"}
@@ -105,8 +107,8 @@ async def upgrade_boost(db: AsyncSession, telegram_id: int, boost_id: int):
     
     # Обновляем характеристики пользователя
     game_state.balance -= upgrade_cost
-    game_state.boost_multiplier += boost.click_multiplier * 0.2 * (1.5 ** current_level)  # Увеличиваем на 20%, 30%, 45% от базового значения
-    game_state.passive_income += boost.passive_income * (1.5 ** current_level)  # Увеличиваем пассивный доход
+    game_state.boost_multiplier += upgrade_click_multiplier
+    game_state.passive_income += upgrade_passive_income
     
     await db.commit()
     await db.refresh(game_state)
