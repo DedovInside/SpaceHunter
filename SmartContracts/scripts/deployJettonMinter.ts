@@ -15,7 +15,7 @@ function createMetadataDict(): Dictionary<bigint, Cell> {
 export async function run(provider: NetworkProvider) {
   const jettonMinter = provider.open(JettonMinter.createFromConfig({
         adminAddress: provider.sender().address as Address,
-        content: beginCell().storeUint(1,8).storeDict(createMetadataDict()).endCell(),
+        content: beginCell().storeUint(2, 8).storeDict(createMetadataDict()).endCell(), // onchain
         JettonWalletCode: await compile('JettonWallet')
   }, await compile('JettonMinter')));
 

@@ -21,7 +21,7 @@ int gas_consumption() asm "15000000 PUSHINT"; ;; 0.015 TON
     set_data(pack_jetton_wallet_data(balance, owner_address, jetton_master_address, jetton_wallet_code));
 }
 
-() send_tokens (slice in_msg_body, slice sender_address, int msg_value, int fwd_fee) impure {
+() send_tokens(slice in_msg_body, slice sender_address, int msg_value, int fwd_fee) impure {
     int query_id = in_msg_body~load_uint(64);
     int jetton_amount = in_msg_body~load_coins();
     slice to_owner_adress = in_msg_body~load_msg_addr();

@@ -59,5 +59,29 @@ export class JettonWallet implements Contract {
                 .storeUint(0, 1)
             .endCell(),
         });
-    }    
+    }
+    
+    async receiveTokens( provider: ContractProvider, via: Sender,
+        opts: {
+          value: bigint;
+          queryId: number;
+          jettonAmount: bigint;
+          fromAddress: Address;
+          responseAddress: Address;
+          forwardTonAmount: bigint;
+        }
+      ) {
+          await provider.internal(via, {
+            value: opts.value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell()
+                .storeUint(0x178d4519, 32)
+                .storeUint(opts.queryId, 64)
+                .storeCoins(opts.jettonAmount)
+                .storeAddress(opts.fromAddress)
+                .storeAddress(opts.responseAddress)
+                .storeCoins(opts.forwardTonAmount)
+            .endCell(),
+        });
+    }
 }
