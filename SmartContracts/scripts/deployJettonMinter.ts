@@ -5,8 +5,8 @@ import { sha256_sync } from '@ton/crypto';
 
 function createMetadataDict(): Dictionary<bigint, Cell> {
   const dict = Dictionary.empty(Dictionary.Keys.BigUint(256), Dictionary.Values.Cell());
-  dict.set(BigInt('0x' + sha256_sync('name').toString('hex')), beginCell().storeStringTail('SpaceCoin').endCell());
-  dict.set(BigInt('0x' + sha256_sync('symbol').toString('hex')), beginCell().storeStringTail('SPC').endCell());
+  dict.set(BigInt('0x' + sha256_sync('name').toString('hex')), beginCell().storeStringTail('CosmoCoin').endCell());
+  dict.set(BigInt('0x' + sha256_sync('symbol').toString('hex')), beginCell().storeStringTail('CSM').endCell());
   dict.set(BigInt('0x' + sha256_sync('decimals').toString('hex')), beginCell().storeStringTail('9').endCell());
   dict.set(BigInt('0x' + sha256_sync('description').toString('hex')), beginCell().storeStringTail('Токен для игры SpaceHunter').endCell());
   return dict;
