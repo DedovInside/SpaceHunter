@@ -40,6 +40,7 @@
     border-radius: 999px;
     border: 2px solid black;
     font-size: 14px;
+    fixed-width: 100px; /* Фиксированная ширина для одинакового размера */
     display: flex;
     align-items: center;
     justify-content: center;

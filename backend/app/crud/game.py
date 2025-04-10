@@ -7,6 +7,7 @@ from app.services.task_checker import check_user_tasks
 
 MAX_PASSIVE_ACCUMULATION_TIME = 3600  # 1 hour in seconds
 MINUTE_INTERVAL = 60  # Apply income every minute when in-app
+MAX_LEVEL = 7  # Maximum level for the game
 
 
 def base_click_income(level: int) -> int:
@@ -45,13 +46,16 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
     #game_state.energy -= 1
     
     # Проверяем, можно ли повысить уровень
-    required_score = required_score_for_level(game_state.level)
     leveled_up = False
-
-    if game_state.score >= required_score:
-        game_state.level += 1
-        game_state.score = 0
-        leveled_up = True
+    
+    # Проверяем, не достигнут ли максимальный уровень
+    if game_state.level < MAX_LEVEL:
+        required_score = required_score_for_level(game_state.level)
+        
+        if game_state.score >= required_score:
+            game_state.level += 1
+            game_state.score = 0
+            leveled_up = True
 
     await db.commit()
     await db.refresh(game_state)

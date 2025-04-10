@@ -29,15 +29,14 @@ import Angara from '../../../assets/Angara_Pixel_Art.png';
 import './FlyPage.css';
 
 const nftSections = [
-    {name: 'Planets', count: 8},
-    {name: 'Satellites', count: 14},
+    {name: 'Solar System', count: 29},
     {name: 'Stars', count: 21},
-    {name: 'Constellations', count: 21},
+    {name: 'Constellations', count: 20},
     {name: 'Nebulae', count: 10},
-    {name: 'Black Holes', count: 11},
+    {name: 'Black Holes', count: 5},
     {name: 'Galaxies', count: 12},
     {name: 'Music', count: 7},
-    {name: 'Cinema', count: 12},
+    {name: 'Cinema', count: 11},
     {name: 'Bonus', count: 10}
 ];
 
@@ -75,11 +74,8 @@ export const FlyPage: FC = () => {
         const fetchGameState = async () => {
             try {
                 // Получаем текущее состояние игры с сервера
-                //console.log("ABOBA 1")
                 const state = await gameApi.getGameState(userId);
-                //console.log("ABOBA 2")
                 setGameState(state);
-                //console.log("ABOBA 3")
                 
                 // Устанавливаем опыт на основе score из gameState
                 setCurrentExp(state.score);
@@ -130,7 +126,7 @@ export const FlyPage: FC = () => {
     };
 
 
-    
+    const MAX_LEVEL = 7; // Максимальный уровень корабля
 
     // Массив кораблей по уровням
     const ships = [
@@ -144,10 +140,21 @@ export const FlyPage: FC = () => {
     ];
 
     // Получаем текущий корабль по уровню
-    const getCurrentShip = () => ships[gameState.level - 1] || ships[0];
+    const getCurrentShip = () => {
+        const index = Math.min(gameState.level - 1, MAX_LEVEL - 1);
+        return ships[index] || ships[0];
+    };
 
-    // Получаем следующий корабль
-    const getNextShip = () => gameState.level < ships.length ? ships[gameState.level] : ships[ships.length - 1];
+    // Получаем следующий корабль или null если достигнут максимальный уровень
+    const getNextShip = () => {
+        if (gameState.level >= MAX_LEVEL) {
+            return null; // максимальный уровень достигнут
+        }
+        return ships[gameState.level] || ships[0];
+    };
+
+    // Проверяем, достиг ли игрок максимального уровня
+    const isMaxLevelReached = () => gameState.level >= MAX_LEVEL;
 
     // Получаем целевой опыт для текущего уровня
     const getLevelTargetExp = () => {
@@ -157,6 +164,9 @@ export const FlyPage: FC = () => {
 
     // Получаем процент прогресса уровня
     const getProgressPercent = () => {
+        if (isMaxLevelReached()) {
+            return 100; // Полная шкала для максимального уровня
+        }
         const targetExp = getLevelTargetExp();
         return Math.min(100, (currentExp / targetExp) * 100);
     };
@@ -314,16 +324,27 @@ export const FlyPage: FC = () => {
                                 >
                                 </div>
                                 <div className="level-progress-text">
-                                {currentExp.toFixed(1)} / {getLevelTargetExp().toFixed(0)}
+                                    {isMaxLevelReached() ? (
+                                        "MAX LEVEL"
+                                    ) : (
+                                        `${currentExp.toFixed(1)} / ${getLevelTargetExp().toFixed(0)}`
+                                    )}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="next-ship-container">
-                            <h3 className="next-ship-title">Следующий корабль</h3>
-                            <div className="next-ship-image-container">
-                                <img src={getNextShip()} alt="Next Ship" className="next-ship-image" />
-                            </div>
+                        <div className="next-ship-image-container">
+                            {isMaxLevelReached() ? (
+                                <div className="max-level-text">MAX LEVEL</div>
+                            ) : (
+                                // Проверяем, что nextShip существует перед отображением
+                                (() => {
+                                    const nextShip = getNextShip();
+                                    return nextShip ? 
+                                        <img src={nextShip} alt="Next Ship" className="next-ship-image" /> :
+                                        <div>Корабль не найден</div>;
+                                })()
+                            )}
                         </div>
                     </div>
                 </ModalWindow>
