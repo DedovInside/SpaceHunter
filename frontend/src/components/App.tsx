@@ -62,11 +62,7 @@ function AuthWrapper({ children }: AuthWrapperProps) {
   }, [navigate]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-purple-900">
-        <Spinner />
-      </div>
-    );
+    return (<Spinner />);
   }
 
   return isAuthenticated ? <>{children}</> : null;

@@ -1,3 +1,12 @@
+.spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #1F0735;
+}
+
+
 .spinner {
   width: 70px;
   text-align: center;
