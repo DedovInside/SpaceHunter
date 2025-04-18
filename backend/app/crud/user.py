@@ -90,3 +90,25 @@ async def update_user_balance(db: AsyncSession, telegram_id: int, balance: float
         await db.commit()
         await db.refresh(db_user)
     return db_user
+
+
+async def get_user_referrals_by_telegram_id(db: AsyncSession, telegram_id: int):
+    """Получение списка пользователей, приглашенных по реферальной ссылке."""
+    # Сначала найдем самого пользователя
+    result = await db.execute(
+        select(User).where(User.telegram_id == telegram_id)
+    )
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        return []
+    
+    # Найдем всех пользователей, которые были приглашены этим пользователем
+    result = await db.execute(
+        select(User)
+        .options(selectinload(User.game_state))
+        .where(User.referred_by_id == user.id)
+    )
+    
+    referred_users = result.scalars().all()
+    return referred_users

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.crud.user import get_user_by_telegram_id, create_user, create_user_with_referral
+from app.crud.user import get_user_by_telegram_id, create_user, create_user_with_referral, get_user_referrals_by_telegram_id
 from app.schemas.user import UserCreate, UserWithGameState
 from app.database import get_db
-from typing import Optional
+from typing import Optional, List
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -48,3 +48,15 @@ async def register_user_with_referral(
     # Создаем нового пользователя с реферальной системой
     new_user = await create_user_with_referral(telegram_id, username, ref_id, db)
     return new_user
+
+
+@router.get("/referrals/{telegram_id}", response_model=List[UserWithGameState])
+async def get_user_referrals(telegram_id: int, db: AsyncSession = Depends(get_db)):
+    """Получение списка пользователей, приглашенных по реферальной ссылке."""
+    user = await get_user_by_telegram_id(db, telegram_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Получаем список рефералов
+    referrals = await get_user_referrals_by_telegram_id(db, telegram_id)
+    return referrals

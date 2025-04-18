@@ -1,33 +1,42 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { Copy, Send } from "lucide-react";
 import { Page } from "@/components/Page.tsx";
+import { userApi } from '@/services/api';
+import { Spinner } from '@/components/Spinner/Spinner.tsx';
 import "./MePage.css";
 
 interface Friend {
   id: number;
-  name: string;
-  coins: number;
-  nfts: number;
+  username: string;
+  telegram_id: number;
+  game_state: {
+    balance: number;
+    level: number;
+  }
 }
 
-const friends: Friend[] = [
-  { id: 1, name: "BROO", coins: 434832428272, nfts: 21 },
-  { id: 2, name: "BROO", coins: 5000000000, nfts: 13 },
-  { id: 3, name: "BROO", coins: 341312311, nfts: 10 },
-  { id: 4, name: "BROO", coins: 21312312, nfts: 6 },
-  { id: 5, name: "BROO", coins: 10000000000, nfts: 76 },
-  { id: 6, name: "BROO", coins: 1212321321312, nfts: 82 },
-  { id: 7, name: "BROO", coins: 1343141241241, nfts: 87 },
-  { id: 8, name: "BROO", coins: 1545325325235, nfts: 92 },
-  { id: 9, name: "BROO", coins: 1625324535352, nfts: 101 },
-  { id: 10, name: "BROO", coins: 1798298080804, nfts: 113 },
-  { id: 11, name: "BROO", coins: 19392139113131, nfts: 125 },
-  
-];
-
 export const MePage: FC = () => {
-  const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "unknown";
+  const [friends, setFriends] = useState<Friend[]>([]);
+  const [loading, setLoading] = useState(true);
+  const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 99281932;
   const inviteLink = `https://t.me/space_hunter_game_bot?start=${userId}`;
+
+  useEffect(() => {
+    async function loadFriends() {
+      try {
+        setLoading(true);
+        const referrals = await userApi.getUserReferrals(userId);
+        setFriends(referrals);
+      } catch (error) {
+        console.error('Failed to load referrals:', error);
+        setFriends([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadFriends();
+  }, [userId]);
 
   const copyInviteLink = async () => {
     try {
@@ -43,8 +52,15 @@ export const MePage: FC = () => {
     window.Telegram?.WebApp?.openTelegramLink(`https://t.me/share/url?url=${inviteLink}&text=${message}`);
   };
 
-  // Сортируем друзей по количеству монет
-  const sortedFriends = [...friends].sort((a, b) => b.coins - a.coins);
+  // Получаем первую букву имени для заполнителя аватара
+  const getInitial = (name: string) => {
+    return name && name.length > 0 ? name[0].toUpperCase() : '?';
+  };
+
+  // Сортируем друзей по балансу
+  const sortedFriends = [...friends].sort((a, b) => 
+    (b.game_state?.balance || 0) - (a.game_state?.balance || 0)
+  );
 
   return (
     <Page back={false}>
@@ -62,23 +78,50 @@ export const MePage: FC = () => {
 
         <div className="friends-section">
           <h2 className="friends-title">YOUR PLAYING FRIENDS</h2>
-          <div className="friends-list-container">
-            <div className="friends-list">
-              {sortedFriends.map((friend, index) => (
-                <div key={friend.id} className="friend-item">
-                  <span className="friend-position">{index + 1}.</span>
-                  <div className="friend-avatar-container">
-                    <div className="friend-avatar"></div>
-                    <span className="friend-name">{friend.name}</span>
-                  </div>
-                  <div className="friend-info">
-                    <span className="friend-coins">{friend.coins.toLocaleString()} coins</span>
-                    <span className="friend-nfts">NFTs: {friend.nfts}</span>
-                  </div>
-                </div>
-              ))}
+          {loading ? (
+            <div className="spinner-container" style={{backgroundColor: "#2C1B52"}}>
+              <Spinner />
             </div>
-          </div>
+          ) : (
+            <div className="friends-list-container">
+              {sortedFriends.length === 0 ? (
+                <div className="no-friends">
+                  <p>No friends yet. Invite friends to play together!</p>
+                </div>
+              ) : (
+                <div className="friends-list">
+                  {sortedFriends.map((friend, index) => (
+                    <div key={friend.id} className="friend-item">
+                      <span className="friend-position">{index + 1}.</span>
+                      <div className="friend-avatar-container">
+                        <div className="friend-avatar">
+                          {/* Пробуем получить аватар пользователя или показываем заменитель */}
+                          {friend.telegram_id ? (
+                            <div className="friend-avatar-placeholder">
+                              {getInitial(friend.username)}
+                            </div>
+                          ) : (
+                            <div className="friend-avatar-placeholder">
+                              {getInitial(friend.username)}
+                            </div>
+                          )}
+                        </div>
+                        <span className="friend-name">{friend.username}</span>
+                      </div>
+                      <div className="friend-info">
+                        <span className="friend-coins">
+                          {(friend.game_state?.balance || 0).toLocaleString()} coins
+                        </span>
+                        <span className="friend-nfts">
+                          Level: {friend.game_state?.level || 1}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Page>

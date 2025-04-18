@@ -123,4 +123,10 @@ export const userApi = {
   // Регистрация пользователя
   registerUser: (telegramId: number | string, username: string) => 
     api.post('/users/register', { telegram_id: telegramId, username }),
+
+
+  // Получение списка рефералов пользователя
+  // Заменить текущую реализацию метода на:
+getUserReferrals: (telegramId: number | string) => 
+  api.get<any, any[]>(`/users/referrals/${telegramId}`),
 };

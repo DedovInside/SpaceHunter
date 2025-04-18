@@ -75,6 +75,7 @@
   position: relative;
 }
 
+/* Обновляем стили для аватаров друзей */
 .friend-avatar-container {
   display: flex;
   flex-direction: column;
@@ -87,11 +88,60 @@
   height: 40px;
   background-color: #2C1B52;
   border-radius: 50%;
+  border: 2px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
+.friend-avatar img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Стили для отсутствия аватара */
+.friend-avatar-placeholder {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Улучшенные стили для имен друзей */
 .friend-name {
   color: white;
   font-size: 12px;
+  width: 100%;
+  max-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* Стиль для случая отсутствия друзей */
+.no-friends {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  padding: 0 20px;
+}
+
+.no-friends p {
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .friend-info {
