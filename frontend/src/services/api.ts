@@ -91,6 +91,23 @@ export interface UserNFT {
   acquired_at: string;
 }
 
+interface TaskResponse {
+  id: number;
+  title: string;
+  description: string;
+  type: 'daily' | 'permanent';
+  reward: number;
+  condition_value: number;
+  condition_type: string;
+}
+
+interface UserTaskResponse {
+  id: number;
+  task: TaskResponse;
+  progress: number;
+  is_completed: boolean;
+}
+
 // API методы сгруппированы по функциональности
 export const gameApi = {
   // Обработка клика (в FlyPage)
@@ -155,6 +172,23 @@ export const boostApi = {
       boost_id: boostId 
     }),
 };
+
+export const taskApi = {
+  // Получение всех заданий для пользователя
+  getUserTasks: (telegramId: number | string) => 
+    api.get<any, UserTaskResponse[]>(`/tasks/user/${telegramId}`),
+  
+  // Получение всех доступных заданий
+  getTasks: () => 
+    api.get<any, TaskResponse[]>('/tasks'),
+    
+  // Проверка выполнения задания
+  checkTask: (telegramId: number | string, taskId: number) =>
+    api.post<any, UserTaskResponse>('/tasks/check', {
+      telegram_id: telegramId,
+      task_id: taskId
+    }),
+}
  
 export const userApi = {
   // Получение информации о пользователе

@@ -1,12 +1,13 @@
 from sqlalchemy import Column, Integer, String, Float, Enum
 from sqlalchemy.orm import relationship
 from app.database import Base
+from sqlalchemy import Enum as SQLEnum
 import enum
 
 
 class TaskTypeEnum(str, enum.Enum):
     DAILY = "daily"
-    PERMAMENT = "permament"
+    PERMANENT = "permanent"
 
 
 class Task(Base):
@@ -16,9 +17,9 @@ class Task(Base):
     title = Column(String, nullable=False)
     description = Column(String, index=True)
     type = Column(Enum(TaskTypeEnum), nullable=False)
-    reward = Column(Float, default=10.0)
-    condition_value = Column(Integer, nullable=False)  # сколько тапов, какой уровень и т.д.
-    condition_type = Column(String, nullable=False)  # что проверяется: 'taps', 'level', 'passive_income'
+    reward = Column(Integer, default=10)
+    condition_value = Column(Integer, nullable=False) 
+    condition_type = Column(String, nullable=False)  
 
     users = relationship("UserTask", back_populates="task")
 

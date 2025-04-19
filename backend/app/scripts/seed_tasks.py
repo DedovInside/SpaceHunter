@@ -1,0 +1,70 @@
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.task import Task, TaskTypeEnum
+from app.database import AsyncSessionLocal
+import asyncio
+
+TASKS_DATA = [
+    {
+        "title": "Daily Clicks",
+        "description": "Make 100 clicks today",
+        "type": TaskTypeEnum.DAILY.value,  
+        "reward": 500,
+        "condition_value": 100,
+        "condition_type": "taps"
+    },
+    {
+        "title": "Energy Spender",
+        "description": "Spend 50 energy points",
+        "type": TaskTypeEnum.DAILY.value,
+        "reward": 300,
+        "condition_value": 50,
+        "condition_type": "energy_spent"
+    },
+    {
+        "title": "Reach Level 5",
+        "description": "Level up your character to level 5",
+        "type": TaskTypeEnum.PERMANENT.value, 
+        "reward": 1000,
+        "condition_value": 5,
+        "condition_type": "level"
+    },
+    {
+        "title": "Passive Income Master",
+        "description": "Reach 100 CSM/hour passive income",
+        "type": TaskTypeEnum.PERMANENT.value,  
+        "reward": 2000,
+        "condition_value": 100,
+        "condition_type": "passive_income"
+    },
+    {
+        "title": "Click Champion",
+        "description": "Reach 1000 total clicks",
+        "type": TaskTypeEnum.PERMANENT.value, 
+        "reward": 1500,
+        "condition_value": 1000,
+        "condition_type": "taps"
+    }
+]
+
+async def seed_tasks():
+    async with AsyncSessionLocal() as db:
+        # Clear the table
+        await db.execute(text("DELETE FROM user_tasks"))
+        await db.execute(text("DELETE FROM tasks"))
+        await db.commit()
+        
+        for task_data in TASKS_DATA:
+            task = Task(**task_data)  
+            db.add(task)
+        
+        try:
+            await db.commit()
+            print("Tasks seeded successfully!")
+        except Exception as e:
+            await db.rollback()
+            print(f"Error seeding tasks: {e}")
+            raise
+
+if __name__ == "__main__":
+    asyncio.run(seed_tasks())

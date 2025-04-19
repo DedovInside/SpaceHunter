@@ -4,12 +4,12 @@ from datetime import datetime
 from sqlalchemy.orm import selectinload
 from app.models.user import User
 from app.services.task_checker import check_user_tasks
-from app.background.energy import ENERGY_RESTORE_AMOUNT, MAX_ENERGY
 
 MAX_PASSIVE_ACCUMULATION_TIME = 3600  # 1 hour in seconds
 MINUTE_INTERVAL = 60  # Apply income every minute when in-app
 MAX_LEVEL = 7  # Maximum level for the game
-
+MAX_ENERGY = 100
+ENERGY_RESTORE_AMOUNT = 1
 
 def base_click_income(level: int) -> int:
     return 1 + (level - 1)
