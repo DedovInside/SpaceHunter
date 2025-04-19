@@ -7,7 +7,6 @@
     height: 100vh;
 }
 
-
 .buttons-container {
     display: flex;
     grid-template-columns: repeat(3, 1fr);
@@ -29,12 +28,30 @@
     filter: brightness(0.8);
 }
 
+/* Общие стили для NFT контейнера - некоторые существуют, обновляем */
 .nft-container {
     padding: 8px;
     max-height: 70vh;
     overflow-y: auto;
+    color: white;
 }
 
+.nft-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: white;
+}
+
+.nft-empty {
+    text-align: center;
+    padding: 32px;
+    color: white;
+    font-style: italic;
+}
+
+/* Сохраняем существующие стили + добавляем специфику */
 .nft-section {
     margin-bottom: 24px;
 }
@@ -52,6 +69,7 @@
     gap: 10px;
 }
 
+/* Обновляем существующие стили для элементов NFT */
 .nft-item {
     aspect-ratio: 1;
     background-color: #1F0735;
@@ -62,6 +80,133 @@
     justify-content: center;
     color: white;
     font-size: 24px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Добавляем новые стили для заблокированных/разблокированных NFT */
+.nft-item.locked {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.nft-item.unlocked {
+    cursor: pointer;
+    border-color: #a884e8;
+}
+
+.nft-item.unlocked:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.nft-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.nft-item .question-mark {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+}
+
+/* NFT Detail Modal - сохраняем стилистику */
+.nft-detail-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    color: white;
+    text-align: center;
+}
+
+.nft-detail-image {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border: 2px solid black;
+}
+
+.nft-detail-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.nft-detail-description {
+    margin-bottom: 16px;
+    color: white;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.nft-detail-acquired {
+    font-style: italic;
+    font-size: 12px;
+    color: #a89eb6;
+}
+
+/* Unlocked NFT Modal */
+.unlocked-nft-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    color: white;
+    text-align: center;
+}
+
+.unlocked-nft-image {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border: 2px solid gold;
+    background-color: #1F0735;
+}
+
+.unlocked-nft-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: gold;
+}
+
+.unlocked-nft-description {
+    margin-bottom: 16px;
+    color: white;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.unlocked-nft-more {
+    color: gold;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.unlocked-nft-button {
+    background-color: #1F0735;
+    color: white;
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 8px;
+}
+
+.unlocked-nft-button:hover {
+    background-color: #2d1149;
 }
 
 .bonus-day-button {

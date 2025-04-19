@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 from fastapi.requests import Request
-from app.api import users, boosts, game, tasks, rating
+from app.api import users, boosts, game, tasks, rating, nft
 from app.background.passive_income import apply_passive_income
 from app.database import AsyncSessionLocal
 
@@ -64,6 +64,7 @@ app.include_router(boosts.router, prefix="/api")
 app.include_router(game.router, prefix="/api/game")
 app.include_router(tasks.router, prefix="/api")
 app.include_router(rating.router, prefix="/api")
+app.include_router(nft.router, prefix="/api")
 # Глобальный список фоновых тасковx
 background_tasks = []
 

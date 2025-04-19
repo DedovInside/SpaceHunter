@@ -67,6 +67,29 @@ interface UpgradeBoostResponse {
   new_click_multiplier: number;
 }
 
+export interface NFT {
+  id: number;
+  name: string;
+  description: string | null;
+  image_path: string;
+  category_id: number;
+  coins_threshold: number;
+}
+
+export interface NFTCategory {
+  id: number;
+  name: string;
+  description: string | null;
+  nfts: NFT[];
+}
+
+export interface UserNFT {
+  user_id: number;
+  nft_id: number;
+  nft: NFT;
+  acquired_at: string;
+}
+
 // API методы сгруппированы по функциональности
 export const gameApi = {
   // Обработка клика (в FlyPage)
@@ -127,6 +150,24 @@ export const userApi = {
 
   // Получение списка рефералов пользователя
   // Заменить текущую реализацию метода на:
-getUserReferrals: (telegramId: number | string) => 
-  api.get<any, any[]>(`/users/referrals/${telegramId}`),
+  getUserReferrals: (telegramId: number | string) => 
+    api.get<any, any[]>(`/users/referrals/${telegramId}`),
+};
+
+export const nftApi = {
+  // Получение всех категорий NFT
+  getCategories: () => 
+    api.get<any, NFTCategory[]>('/nft/categories'),
+  
+  // Получение коллекции пользователя
+  getUserCollection: (telegramId: number | string) => 
+    api.get<any, UserNFT[]>(`/nft/user/${telegramId}`),
+  
+  // Получение доступных NFT
+  getAvailableNFTs: (telegramId: number | string) => 
+    api.get<any, NFT[]>(`/nft/available/${telegramId}`),
+  
+  // Автоматическая разблокировка всех доступных NFT
+  autoUnlockNFTs: (telegramId: number | string) => 
+    api.post<any, UserNFT[]>(`/nft/auto-unlock/${telegramId}`)
 };

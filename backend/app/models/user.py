@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, BigInteger, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import func
 from app.database import Base
@@ -19,9 +19,12 @@ class User(Base):
     game_state = relationship("GameState", back_populates="user", uselist=False)
     boosts = relationship("UserBoost", back_populates="user")
     tasks = relationship("UserTask", back_populates="user")
+    nfts = relationship("UserNFT", back_populates="user")
     referred_users = relationship(
         "User",
         backref=backref("referrer", remote_side=[id]),
         cascade="all, delete",
     )
     daily_bonus = relationship("UserDailyBonus", back_populates="user", uselist=False)
+
+

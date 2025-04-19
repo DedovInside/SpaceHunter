@@ -7,3 +7,4 @@ from app.models.task import Task
 from app.models.user_tasks import UserTask
 from app.models.daily_bonus import DailyBonus
 from app.models.daily_bonus import UserDailyBonus
+from app.models.nft import NFT, NFTCategory, UserNFT
