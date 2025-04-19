@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy.orm import selectinload
 from app.models.user import User
 from app.services.task_checker import check_user_tasks
+from app.background.energy import ENERGY_RESTORE_AMOUNT, MAX_ENERGY
 
 MAX_PASSIVE_ACCUMULATION_TIME = 3600  # 1 hour in seconds
 MINUTE_INTERVAL = 60  # Apply income every minute when in-app
@@ -43,7 +44,7 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
     game_state.balance += reward
     game_state.last_click_at = datetime.utcnow()
     
-    #game_state.energy -= 1
+    game_state.energy -= 1
     
     # Проверяем, можно ли повысить уровень
     leveled_up = False
@@ -67,7 +68,8 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
         "new_score": game_state.score,
         "new_balance": game_state.balance,
         "level": game_state.level,
-        "leveled_up": leveled_up
+        "leveled_up": leveled_up,
+        "energy": game_state.energy
     }
 
 
@@ -180,3 +182,46 @@ async def apply_passive_income(db: AsyncSession, telegram_id: int, is_returning:
             "new_balance": game_state.balance,
             "is_returning": False
         }
+    
+async def calculate_energy_restore(db: AsyncSession, telegram_id: int) -> dict:
+    """Расчет восстановления энергии"""
+    user = await get_user_game_state(db, telegram_id)
+    if not user:
+        return {"error": "User or game state not found"}
+    
+    game_state = user.game_state
+    current_time = datetime.now()
+    elapsed_sec10 = (current_time - game_state.last_energy_update).total_seconds() /10
+    energy_to_restore = int(elapsed_sec10 * ENERGY_RESTORE_AMOUNT)
+    
+    return {
+        "current_energy": game_state.energy,
+        "energy_to_restore": energy_to_restore,
+        "max_energy": MAX_ENERGY,
+        "game_state": game_state,
+        "current_time": current_time
+    }
+
+async def apply_energy_restore(db: AsyncSession, telegram_id: int) -> dict:
+    """Применение восстановления энергии"""
+    result = await calculate_energy_restore(db, telegram_id)
+    if "error" in result:
+        return result
+    
+    game_state = result["game_state"]
+    current_time = result["current_time"]
+    energy_to_restore = result["energy_to_restore"]
+    
+    if energy_to_restore > 0 and game_state.energy < MAX_ENERGY:
+        game_state.energy = min(
+            game_state.energy + energy_to_restore,
+            MAX_ENERGY
+        )
+        game_state.last_energy_update = current_time
+        await db.commit()
+    
+    return {
+        "new_energy": game_state.energy,
+        "restored_amount": energy_to_restore,
+        "max_energy": MAX_ENERGY
+    }

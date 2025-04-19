@@ -5,6 +5,7 @@ from starlette.responses import JSONResponse
 from fastapi.requests import Request
 from app.api import users, boosts, game, tasks, rating, nft
 from app.background.passive_income import apply_passive_income
+from app.background.energy import restore_energy_task
 from app.database import AsyncSessionLocal
 
 # Инициализация приложения FastAPI
@@ -84,9 +85,18 @@ def read_root():
 # Запускаем фоновый процесс пассивного дохода
 @app.on_event("startup")
 async def startup_event():
-    task = asyncio.create_task(apply_passive_income())
-    background_tasks.append(task)
+    try:
+        # Запуск задачи пассивного дохода
+        passive_income_task = asyncio.create_task(apply_passive_income())
+        background_tasks.append(passive_income_task)
 
+        # Запуск задачи восстановления энергии
+        energy_task = asyncio.create_task(restore_energy_task())
+        background_tasks.append(energy_task)
+        
+        print("Background tasks started successfully")
+    except Exception as e:
+        print(f"Error starting background tasks: {e}")
 
 # Завершаем фоновые процессы при остановке сервера
 @app.on_event("shutdown")

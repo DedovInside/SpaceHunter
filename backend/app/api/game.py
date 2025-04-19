@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.crud.game import process_click, calculate_passive_income, apply_passive_income
+from app.crud.game import apply_energy_restore, calculate_energy_restore, process_click, calculate_passive_income, apply_passive_income
 
 from app.models.user import User
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 router = APIRouter()
 
@@ -91,3 +91,21 @@ async def apply_returning_income_api(telegram_id: int, db: AsyncSession = Depend
         "applied_income": result["applied_income"],
         "new_balance": result["new_balance"]
     }
+
+@router.get("/energy/{telegram_id}")
+async def get_energy_state(telegram_id: int, db: AsyncSession = Depends(get_db)):
+    result = await calculate_energy_restore(db, telegram_id)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return {
+        "current_energy": result["current_energy"],
+        "energy_to_restore": result["energy_to_restore"],
+        "max_energy": result["max_energy"]
+    }
+
+@router.post("/energy/restore/{telegram_id}")
+async def restore_energy(telegram_id: int, db: AsyncSession = Depends(get_db)):
+    result = await apply_energy_restore(db, telegram_id)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result

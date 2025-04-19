@@ -33,6 +33,7 @@ interface GameClickResponse {
   new_balance: number;
   level: number;
   leveled_up: boolean;
+  energy: number;
 }
 
 interface GameStateResponse {
@@ -124,6 +125,22 @@ export const gameApi = {
       applied_income: number,
       new_balance: number 
     }>(`/game/apply_passive_income/${telegramId}`),
+
+  // Получение состояния энергии
+  getEnergyState: (telegramId: number | string) => 
+    api.get<any, {
+        current_energy: number,
+        energy_to_restore: number,
+        max_energy: number
+    }>(`/game/energy/${telegramId}`),
+
+  // Применение восстановления энергии
+  applyEnergyRestore: (telegramId: number | string) => 
+    api.post<any, {
+        new_energy: number,
+        restored_amount: number,
+        max_energy: number
+    }>(`/game/energy/restore/${telegramId}`)
 };
 
 export const boostApi = {

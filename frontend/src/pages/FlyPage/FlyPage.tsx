@@ -70,7 +70,29 @@ export const FlyPage: FC = () => {
             }
         };
 
+        const applyEnergyRestore = async () => {
+            try {
+                const result = await gameApi.applyEnergyRestore(userId);
+                if (result.restored_amount > 0) {
+                    setGameState(prev => ({
+                        ...prev,
+                        energy: result.new_energy
+                    }));
+                }
+            } catch (error) {
+                console.error('Error restoring energy:', error);
+            }
+        };
+
         fetchGameState();
+
+        const interval = setInterval(fetchGameState, 10000);
+        const energyRestoreInterval = setInterval(applyEnergyRestore, 15000);
+
+        // Очистка интервала при размонтировании компонента
+        return () => {
+            clearInterval(interval);
+            clearInterval(energyRestoreInterval);};
     }, [userId]);
     
     // Загружаем NFT данные
@@ -110,6 +132,9 @@ export const FlyPage: FC = () => {
     // Функция обработки нажатия на корабль
     const handleShipClick = async () => {
         try {
+            if (gameState.energy <= 0) {
+                return;
+            }
             // Анимация нажатия
             const shipButton = document.querySelector('.ship-button');
             shipButton?.classList.add('clicked');
@@ -123,7 +148,8 @@ export const FlyPage: FC = () => {
                 ...prev,
                 balance: result.new_balance,
                 score: result.new_score,
-                level: result.level
+                level: result.level, 
+                energy: result.energy
             }));
             
             // Обновляем опыт
@@ -239,6 +265,10 @@ export const FlyPage: FC = () => {
                         className="w-80 h-50 object-contain"
                     />
                 </button>
+
+                <div className="energy-display">
+                    <span className="energy-value">{gameState.energy}/100</span>
+                </div>
 
                 <ModalWindow
                     isOpen={showBonusModal}
