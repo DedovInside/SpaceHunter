@@ -1,6 +1,6 @@
 import {ModalWindow} from '@/components/ModalWindow/ModalWindow';
 import {FC, useEffect, useState} from 'react';
-import { gameApi, nftApi, UserNFT, NFTCategory} from '@/services/api';
+import { gameApi, nftApi, bonusApi, UserNFT, NFTCategory, DailyBonusStatus, DailyBonusConfig} from '@/services/api';
 
 import {Page} from '@/components/Page.tsx';
 
@@ -54,6 +54,10 @@ export const FlyPage: FC = () => {
     const [showUnlockNFTModal, setShowUnlockNFTModal] = useState(false);
     const [selectedNFT, setSelectedNFT] = useState<UserNFT | null>(null);
     const [showNFTDetailModal, setShowNFTDetailModal] = useState(false);
+    const [bonusStatus, setBonusStatus] = useState<DailyBonusStatus | null>(null);
+    const [bonusConfig, setBonusConfig] = useState<DailyBonusConfig[]>([]);
+    const [isLoadingBonuses, setIsLoadingBonuses] = useState(true);
+    
 
     // Загружаем начальное состояние игры.
     useEffect(() => {
@@ -128,6 +132,54 @@ export const FlyPage: FC = () => {
         
         loadNFTData();
     }, [userId]);
+
+    // Загружаем данные ежедневных бонусов
+    useEffect(() => {
+        const loadBonusData = async () => {
+            try {
+                setIsLoadingBonuses(true);
+                const [status, config] = await Promise.all([
+                    bonusApi.getDailyBonusStatus(userId),
+                    bonusApi.getDailyBonusConfig()
+                ]);
+                setBonusStatus(status);
+                setBonusConfig(config);
+            } catch (error) {
+                console.error('Error loading bonus data:', error);
+            } finally {
+                setIsLoadingBonuses(false);
+            }
+        };
+
+        loadBonusData();
+    }, [userId]);
+
+    // Добавляем перед return
+    const handleClaimBonus = async (day: number) => {
+        if (!bonusStatus?.can_claim || bonusStatus.current_day !== day) return;
+
+        try {
+            const result = await bonusApi.claimDailyBonus(userId);
+            
+            if (result.success) {
+                setBonusStatus(prev => ({
+                    ...prev!,
+                    current_day: result.next_day,
+                    can_claim: false,
+                    last_claimed: result.last_claimed_date
+                }));
+
+                if (result.reward_type === 'coins' && result.new_balance !== null) {
+                    setGameState(prev => ({
+                        ...prev,
+                        balance: result.new_balance || prev.balance
+                    }));
+                }
+            }
+        } catch (error) {
+            console.error('Error claiming bonus:', error);
+        }
+    };
 
     // Функция обработки нажатия на корабль
     const handleShipClick = async () => {
@@ -276,67 +328,37 @@ export const FlyPage: FC = () => {
                     title="Daily Bonuses"
                     icon={dailyBonusIcon}
                 >
+                    {isLoadingBonuses ? (
+                        <div className="loading">Loading bonuses...</div>
+                    ) : (
                     <div className="grid grid-cols-3 gap-4">
-                        {/* День 1 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 1</span>
-                            <img src={DropPageIcon} alt={"Bonus icon"} className="bonus-icon"/>
-                            <div className="bonus-amount">+500</div>
-                        </button>
-                        {/* День 2 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 2</span>
-                            <img src={DropPageIcon} alt={"Bonus icon"} className="bonus-icon"/>
-                            <div className="bonus-amount">+1500</div>
-                        </button>
-                        {/* День 3 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 3</span>
-                            <img src={DropPageIcon} alt={"Bonus icon"} className="bonus-icon"/>
-                            <div className="bonus-amount">+3000</div>
-                        </button>
-                        {/* День 4 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 4</span>
-                            <img src={DropPageIcon} alt={"Bonus icon"} className="bonus-icon"/>
-                            <div className="bonus-amount">+5000</div>
-                        </button>
-                        {/* День 5 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 5</span>
-                            <img src={DropPageIcon} alt={"Bonus icon"} className="bonus-icon"/>
-                            <div className="bonus-amount">+10000</div>
-                        </button>
-                        {/* День 6 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 6</span>
-                            <img src={DropPageIcon} alt={"Bonus icon"} className="bonus-icon"/>
-                            <div className="bonus-amount">+15000</div>
-                        </button>
-                        {/* День 7 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 7</span>
-                            <img src={DropPageIcon} alt={"Bonus icon"} className="bonus-icon"/>
-                            <div className="bonus-amount">+20000</div>
-                        </button>
-                        {/* День 8 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 8</span>
-                            <img src={DropPageIcon} alt={"Bonus icon"} className="bonus-icon"/>
-                            <div className="bonus-amount">+30000</div>
-                        </button>
-                        {/* День 9 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 9</span>
-                            <img src={DropPageIcon} alt={"Bonus icon"} className="bonus-icon"/>
-                            <div className="bonus-amount">+50000</div>
-                        </button>
-                        {/* День 10 */}
-                        <button className="bonus-day-button">
-                            <span className="day-label">DAY 10</span>
-                            <span className="big-question-mark">?</span>
-                        </button>
+                        {bonusConfig.map((bonus) => {
+                            const isCurrentDay = bonusStatus?.current_day === bonus.day;
+                            const isPastDay = bonusStatus?.current_day && bonusStatus.current_day > bonus.day;
+                            const canClaim = isCurrentDay && bonusStatus?.can_claim;
+
+                            return (
+                                <button
+                                    key={bonus.day}
+                                    className={`bonus-day-button ${isCurrentDay ? 'active' : ''} 
+                                            ${isPastDay ? 'claimed' : ''}`}
+                                    onClick={() => canClaim && handleClaimBonus(bonus.day)}
+                                    disabled={!canClaim}
+                                >
+                                    <span className="day-label">DAY {bonus.day}</span>
+                                    {bonus.type === 'nft' ? (
+                                        <span className="big-question-mark">?</span>
+                                    ) : (
+                                        <>
+                                        <img src={DropPageIcon} alt="Bonus icon" className="bonus-icon"/>
+                                        <div className="bonus-amount">+{bonus.amount}</div>
+                                        </>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
+                    )}
                 </ModalWindow>
 
                 

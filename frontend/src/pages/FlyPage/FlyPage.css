@@ -209,6 +209,8 @@
     background-color: #2d1149;
 }
 
+/* Стили для кнопки "Бонусы" */
+
 .bonus-day-button {
     background-color: #1F0735;
     padding: 1rem;
@@ -220,6 +222,35 @@
     border: 2px solid black;
     cursor: pointer;
     color: white;
+    transition: all 0.3s ease;
+}
+
+.bonus-day-button.active {
+    border-color: #FFD700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    background-color: #2d1149;
+}
+
+.bonus-day-button.claimed {
+    opacity: 0.5;
+    background-color: #1a1a1a;
+    cursor: not-allowed;
+    border-color: #333333;
+}
+
+.bonus-day-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: #1a1a1a;
+}
+
+.bonus-day-button:hover:not(:disabled):not(.claimed) {
+    background-color: #2d1149;
+    transform: translateY(-2px);
+}
+
+.bonus-day-button:active:not(:disabled):not(.claimed) {
+    transform: translateY(0);
 }
 
 .bonus-day-button:last-child {

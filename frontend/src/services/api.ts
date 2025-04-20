@@ -108,6 +108,31 @@ interface UserTaskResponse {
   is_completed: boolean;
 }
 
+export interface DailyBonusStatus {
+  current_day: number;
+  can_claim: boolean;
+  last_claimed: string | null;
+  days_streak: number;
+}
+
+interface DailyBonusResult {
+  success: boolean;
+  message: string;
+  reward_type: string;
+  reward_amount: number;
+  current_day: number;
+  next_day: number;
+  can_claim: boolean;
+  last_claimed_date: string;
+  new_balance: number | null;
+}
+
+export interface DailyBonusConfig {
+  day: number;
+  type: string;
+  amount: number;
+}
+
 // API методы сгруппированы по функциональности
 export const gameApi = {
   // Обработка клика (в FlyPage)
@@ -221,4 +246,18 @@ export const nftApi = {
   // Автоматическая разблокировка всех доступных NFT
   autoUnlockNFTs: (telegramId: number | string) => 
     api.post<any, UserNFT[]>(`/nft/auto-unlock/${telegramId}`)
+};
+
+export const bonusApi = {
+  // Получить статус ежедневных бонусов
+  getDailyBonusStatus: (telegramId: number | string) =>
+    api.get<any, DailyBonusStatus>(`/bonus/daily/status/${telegramId}`),
+
+  // Забрать ежедневный бонус
+  claimDailyBonus: (telegramId: number | string) =>
+    api.post<any, DailyBonusResult>(`/bonus/daily/claim/${telegramId}`),
+
+  // Получить конфигурацию бонусов
+  getDailyBonusConfig: () =>
+    api.get<any, DailyBonusConfig[]>('/bonus/daily/config'),
 };

@@ -12,6 +12,8 @@ class DailyBonus(Base):
     reward_type = Column(String, nullable=False)  # например: "coins", "nft"
     reward_amount = Column(Float, nullable=True)  # для монет или энергии, если не NFT
 
+    user_bonuses = relationship("UserDailyBonus", back_populates="daily_bonus")
+
 
 class UserDailyBonus(Base):
     __tablename__ = "user_daily_bonus"
@@ -19,5 +21,7 @@ class UserDailyBonus(Base):
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
     current_day = Column(Integer, default=1)  # День от 1 до 10
     last_claimed_date = Column(Date)
+    bonus_id = Column(Integer, ForeignKey("daily_bonuses.id"))
 
     user = relationship("User", back_populates="daily_bonus")
+    daily_bonus = relationship("DailyBonus", back_populates="user_bonuses")
