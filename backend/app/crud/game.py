@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 from datetime import datetime
 from sqlalchemy.orm import selectinload
 from app.models.user import User
-from app.services.task_checker import check_user_tasks
+from app.services.task_checker import update_task_progress
 
 MAX_PASSIVE_ACCUMULATION_TIME = 3600  # 1 hour in seconds
 MINUTE_INTERVAL = 60  # Apply income every minute when in-app
@@ -61,7 +61,13 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
     await db.commit()
     await db.refresh(game_state)
 
-    await check_user_tasks(db, user.id)
+     # Проверяем прогресс заданий
+    completed_tasks = await update_task_progress(db, user.id, "taps", 1)
+    if leveled_up:
+        level_tasks = await update_task_progress(db, user.id, "level", game_state.level)
+        completed_tasks.extend(level_tasks)
+    energy_tasks = await update_task_progress(db, user.id, "energy_spent", 1)
+    completed_tasks.extend(energy_tasks)
 
     return {
         "reward": reward,
@@ -69,7 +75,8 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
         "new_balance": game_state.balance,
         "level": game_state.level,
         "leveled_up": leveled_up,
-        "energy": game_state.energy
+        "energy": game_state.energy,
+        "completed_tasks": completed_tasks
     }
 
 
@@ -145,6 +152,8 @@ async def apply_passive_income(db: AsyncSession, telegram_id: int, is_returning:
         
         # Save changes to DB
         await db.commit()
+
+        
         
         return {
             "applied_income": rounded_income,
