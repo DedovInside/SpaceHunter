@@ -14,7 +14,7 @@ NFT_CATEGORIES = [
     {"name": "Galaxies", "description": "Star systems beyond our own Milky Way"},
     {"name": "Music", "description": "Music-themed cosmic artifacts"},
     {"name": "Cinema", "description": "Film and movie inspired cosmic items"},
-    {"name": "Bonus", "description": "Special edition cosmic collectibles"}
+    {"name": "Bonus", "description": "Special edition Space Hunter"}
 ]
 
 # Список NFT с порогами заработанной валюты
@@ -362,6 +362,13 @@ NFT_DATA = [
 
     {"name": "Галактика Вертушка", "description": "Спиральная хороводница Вселенной, раскручивающая свои звёздные рукава в грациозном танце. Кружится в пустоте, разбрызгивая свет по своим космическим дорогам",
      "image_path": "nfts/galaxies/Pinwheel/Pinwheel_Pixel_Art.png", "category_id": 6, "coins_threshold": 109},
+
+
+
+
+    # Бонусные
+
+    
     
 ]
 

@@ -15,6 +15,8 @@ class User(Base):
     created_at = Column(DateTime, default=func.now())
     referred_by_id = Column(Integer, ForeignKey("users.id"), nullable=True)
 
+    # Поле для хранения адреса TON кошелька
+
     # Отношения
     game_state = relationship("GameState", back_populates="user", uselist=False)
     boosts = relationship("UserBoost", back_populates="user")

@@ -40,7 +40,7 @@ TASKS_DATA = [
     {
         "title": "Click Champion",
         "description": "Reach 1000 total clicks",
-        "type": "permanent", 
+        "type": "permanent",
         "reward": 1500,
         "condition_value": 1000,
         "condition_type": "taps"

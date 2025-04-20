@@ -261,3 +261,22 @@ export const bonusApi = {
   getDailyBonusConfig: () =>
     api.get<any, DailyBonusConfig[]>('/bonus/daily/config'),
 };
+
+
+// Добавьте методы для работы с кошельком
+export const walletApi = {
+  connectWallet: async (telegramId: number, address: string) => {
+      const response = await axios.post(`$/wallet/${telegramId}/connect`, { address });
+      return response.data;
+  },
+  
+  getWalletStatus: async (telegramId: number) => {
+      const response = await axios.get(`$/wallet/${telegramId}/status`);
+      return response.data;
+  },
+  
+  disconnectWallet: async (telegramId: number) => {
+      const response = await axios.delete(`$/wallet/${telegramId}/disconnect`);
+      return response.data;
+  }
+};

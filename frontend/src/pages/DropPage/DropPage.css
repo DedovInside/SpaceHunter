@@ -73,6 +73,80 @@
     height: 40px;
 }
 
+/* Скрываем оригинальную кнопку TonConnect */
+.hidden-ton-connect {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* Позиционирование нашей кнопки */
+.wallet-button-container {
+    margin-top: auto;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Стили для информации о подключенном кошельке */
+.connected-wallet-container {
+    margin-top: auto;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.wallet-info {
+    background-color: #2C1B52;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid black;
+    width: 100%;
+    text-align: center;
+}
+
+.wallet-address {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+}
+
+.wallet-connected-text {
+    color: #4CAF50;
+    font-size: 14px;
+    margin: 0;
+}
+
+.connect-wallet-button {
+    background-color: #2C1B52;
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid black;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.wallet-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.ton-connect-container {
+    display: none;
+}
 @keyframes float {
     0% {
         transform: translateY(0) scale(1);

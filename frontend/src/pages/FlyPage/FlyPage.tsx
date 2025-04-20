@@ -59,6 +59,7 @@ export const FlyPage: FC = () => {
     const [isLoadingBonuses, setIsLoadingBonuses] = useState(true);
     
 
+    // ...existing code...
     // Загружаем начальное состояние игры.
     useEffect(() => {
         const fetchGameState = async () => {
@@ -88,15 +89,30 @@ export const FlyPage: FC = () => {
             }
         };
 
-        fetchGameState();
+        // Изменяем порядок вызовов: сначала восстанавливаем энергию, потом получаем состояние
+        const initializeGameState = async () => {
+            try {
+                // Сначала применяем любое накопленное восстановление энергии
+                await applyEnergyRestore();
+                // Затем получаем обновленное состояние игры
+                await fetchGameState();
+            } catch (error) {
+                console.error('Error initializing game state:', error);
+            }
+        };
 
+        // Запускаем инициализацию сразу при монтировании компонента
+        initializeGameState();
+
+        // Настраиваем периодические обновления
         const interval = setInterval(fetchGameState, 10000);
         const energyRestoreInterval = setInterval(applyEnergyRestore, 15000);
 
         // Очистка интервала при размонтировании компонента
         return () => {
             clearInterval(interval);
-            clearInterval(energyRestoreInterval);};
+            clearInterval(energyRestoreInterval);
+        };
     }, [userId]);
     
     // Загружаем NFT данные
