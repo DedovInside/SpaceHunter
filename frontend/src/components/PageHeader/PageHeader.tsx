@@ -63,14 +63,14 @@ export const PageHeader: React.FC = () => {
     return (
         <>
             <header className="page-header">
-                <div className="user-info">
-                    <div className="avatar-container">
-                        <img
-                            src={WebApp.initDataUnsafe.user?.photo_url}
-                            alt="User Avatar"
-                            className="user-avatar"
-                        />
-                    </div>
+                <div className="avatar-container">
+                    <img
+                        src={WebApp.initDataUnsafe.user?.photo_url}
+                        alt="User Avatar"
+                        className="user-avatar"
+                    />
+                </div>
+                <div className="farming-rate-container">
                     <div className="farming-rate">
                         {passiveIncome.toLocaleString()} CSM/h
                     </div>

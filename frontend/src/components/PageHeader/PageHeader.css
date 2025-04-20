@@ -10,11 +10,6 @@
     padding: 0 16px;
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-}
-
 .avatar-container {
     width: 48px;
     height: 48px;
