@@ -1,6 +1,6 @@
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.task import Task, TaskTypeEnum
+from app.models.task import Task
 from app.database import AsyncSessionLocal
 import asyncio
 
@@ -8,7 +8,7 @@ TASKS_DATA = [
     {
         "title": "Daily Clicks",
         "description": "Make 100 clicks today",
-        "type": TaskTypeEnum.DAILY.value,  
+        "type": "daily",  
         "reward": 500,
         "condition_value": 100,
         "condition_type": "taps"
@@ -16,7 +16,7 @@ TASKS_DATA = [
     {
         "title": "Energy Spender",
         "description": "Spend 50 energy points",
-        "type": TaskTypeEnum.DAILY.value,
+        "type": "daily",
         "reward": 300,
         "condition_value": 50,
         "condition_type": "energy_spent"
@@ -24,7 +24,7 @@ TASKS_DATA = [
     {
         "title": "Reach Level 5",
         "description": "Level up your character to level 5",
-        "type": TaskTypeEnum.PERMANENT.value, 
+        "type": "permanent", 
         "reward": 1000,
         "condition_value": 5,
         "condition_type": "level"
@@ -32,7 +32,7 @@ TASKS_DATA = [
     {
         "title": "Passive Income Master",
         "description": "Reach 100 CSM/hour passive income",
-        "type": TaskTypeEnum.PERMANENT.value,  
+        "type": "permanent",  
         "reward": 2000,
         "condition_value": 100,
         "condition_type": "passive_income"
@@ -40,7 +40,7 @@ TASKS_DATA = [
     {
         "title": "Click Champion",
         "description": "Reach 1000 total clicks",
-        "type": TaskTypeEnum.PERMANENT.value, 
+        "type": "permanent", 
         "reward": 1500,
         "condition_value": 1000,
         "condition_type": "taps"

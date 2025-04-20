@@ -21,7 +21,7 @@ interface UserTask {
 }
 
 export const TasksPage: FC = () => {
-  const [activeTab, setActiveTab] = useState<"daily" | "global">("daily");
+  const [activeTab, setActiveTab] = useState<"daily" | "permanent">("daily");
   const [tasks, setTasks] = useState<UserTask[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -67,8 +67,8 @@ export const TasksPage: FC = () => {
             Daily
           </button>
           <button
-            className={`tab-button ${activeTab === "global" ? "active" : ""}`}
-            onClick={() => setActiveTab("global")}
+            className={`tab-button ${activeTab === "permanent" ? "active" : ""}`}
+            onClick={() => setActiveTab("permanent")}
           >
             Global
           </button>
@@ -77,42 +77,27 @@ export const TasksPage: FC = () => {
         {isLoading ? (
           <div className="loading">Loading tasks...</div>
         ) : (
-          <div className="tasks-list">
+          <div className="tasks-list-container">
+            <div className="tasks-list">
             {filteredTasks.map((userTask) => (
               <div key={userTask.id} className="task-item">
                 <div className="task-info">
-                  <div className="task-header">
-                    <span className="task-title">{userTask.task.title}</span>
+                    <span className="task-description">{userTask.task.description}</span>
                     <span className="task-reward">
                       +{userTask.task.reward} CSM
                     </span>
                   </div>
-                  <p className="task-description">
-                    {userTask.task.description}
-                  </p>
-                  <div className="progress-container">
-                    <div className="progress-bar">
-                      <div
-                        className="progress"
-                        style={{
-                          width: `${
-                            (userTask.progress /
-                              userTask.task.condition_value) *
-                            100
-                          }%`,
-                        }}
-                      />
-                    </div>
-                    <div className="progress-text">
-                      {userTask.progress} / {userTask.task.condition_value}
-                    </div>
-                  </div>
+                  <button 
+                    className="task-button"
+                    onClick={() => {
+                      console.log('Task clicked:', userTask.id);
+                    }}
+                  >
+                    Go
+                  </button>
                 </div>
-                {userTask.is_completed && (
-                  <div className="completed-mark">✓</div>
-                )}
+                ))}
               </div>
-            ))}
           </div>
         )}
       </div>

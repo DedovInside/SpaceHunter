@@ -25,7 +25,7 @@ async def restore_energy_task():
                 if game_state and game_state.energy < MAX_ENERGY:
                     now = datetime.now(datetime.timezone.utc)
                     elapsed_minutes = (now - game_state.last_energy_update).total_seconds() / 60
-                    energy_to_restore = int(elapsed_minutes * ENERGY_PER_MINUTE)
+                    energy_to_restore = int(elapsed_minutes * ENERGY_RESTORE_AMOUNT)
 
                     print(f"User {user.id}: Current energy: {game_state.energy}, Restoring: {energy_to_restore}")
                     if energy_to_restore > 0:

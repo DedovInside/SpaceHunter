@@ -1,19 +1,12 @@
 from pydantic import BaseModel
-from enum import Enum
-
-
-class TaskTypeEnum(str, Enum):
-    DAILY = "daily"
-    PERMANENT = "permanent"
-
 
 class TaskBase(BaseModel):
     title: str
     description: str
-    target_value: int
+    condition_value: int
     reward: int
-    type: TaskTypeEnum
-    condition: str
+    type: str
+    condition_type: str
 
 
 class TaskCreate(TaskBase):
@@ -30,6 +23,7 @@ class TaskRead(TaskBase):
 class UserTaskRead(BaseModel):
     id: int
     task: TaskRead
+    progress: int
     is_completed: bool
 
     class Config:
