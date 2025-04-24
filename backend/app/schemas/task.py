@@ -1,4 +1,7 @@
 from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
+
 
 class TaskBase(BaseModel):
     title: str
@@ -25,6 +28,15 @@ class UserTaskRead(BaseModel):
     task: TaskRead
     progress: int
     is_completed: bool
+    is_claimed: bool = False
 
     class Config:
         from_attributes = True
+
+
+class TaskClaimResponse(BaseModel):
+    success: bool
+    reward: Optional[int] = None
+    new_balance: Optional[int] = None
+    task_id: Optional[int] = None
+    error: Optional[str] = None

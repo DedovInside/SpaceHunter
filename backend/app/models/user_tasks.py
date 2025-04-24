@@ -12,8 +12,9 @@ class UserTask(Base):
     task_id = Column(Integer, ForeignKey('tasks.id'))
     progress = Column(Integer, default=0)
     is_completed = Column(Boolean, default=False)
-    last_updated = Column(DateTime, default=datetime.now)  # Добавляем поле
-    completed_at = Column(DateTime, nullable=True)  # Добавляем поле
+    is_claimed = Column(Boolean, default=False)
+    last_updated = Column(DateTime, default=datetime.now)
+    completed_at = Column(DateTime, nullable=True)
 
     user = relationship("User", back_populates="tasks")
     task = relationship('Task', back_populates='users')

@@ -4,6 +4,8 @@ from app.models.task import Task
 from app.database import AsyncSessionLocal
 import asyncio
 
+# Добавить дополнительное ежедневное задание для daily_balance
+
 TASKS_DATA = [
     {
         "title": "Daily Clicks",
@@ -20,6 +22,14 @@ TASKS_DATA = [
         "reward": 300,
         "condition_value": 50,
         "condition_type": "energy_spent"
+    },
+    {
+        "title": "Daily Profit",
+        "description": "Earn 1000 CSM today",
+        "type": "daily",
+        "reward": 500,
+        "condition_value": 1000,
+        "condition_type": "daily_balance"
     },
     {
         "title": "Reach Level 5",
@@ -39,11 +49,11 @@ TASKS_DATA = [
     },
     {
         "title": "Click Champion",
-        "description": "Reach 1000 total clicks",
+        "description": "Reach 1000 total balance",
         "type": "permanent",
         "reward": 1500,
         "condition_value": 1000,
-        "condition_type": "taps"
+        "condition_type": "balance"
     }
 ]
 

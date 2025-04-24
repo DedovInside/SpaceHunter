@@ -11,7 +11,7 @@ async def claim_daily_bonus(telegram_id: int, db: AsyncSession):
     # 1. Получаем пользователя
     user_result = await db.execute(
         select(User)
-        .options(selectinload(User.game_state), selectinload(User.daily_bonus))
+        .options(selectinload(User.game_state), selectinload(User.daily_bonus), selectinload(User.daily_game_state))
         .where(User.telegram_id == telegram_id)
     )
     user = user_result.scalar_one_or_none()
@@ -49,6 +49,9 @@ async def claim_daily_bonus(telegram_id: int, db: AsyncSession):
     if daily_bonus.reward_type == "coins":
         game_state = user.game_state
         game_state.balance += daily_bonus.reward_amount
+
+        user.daily_game_state.balance += daily_bonus.reward_amount  # Обновляем баланс в DailyGameState
+        
     elif daily_bonus.reward_type == "nft":
         # TODO: логика выдачи nft
         pass

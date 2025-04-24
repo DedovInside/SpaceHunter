@@ -58,7 +58,14 @@
 .task-info {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 8px;
+  flex-grow: 1;
+  margin-right: 12px;
+}
+
+.task-header {
+  display: flex;
+  flex-direction: column;
 }
 
 .task-description {
@@ -71,13 +78,42 @@
   font-size: 12px;
 }
 
+.task-progress-bar {
+  position: relative;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.task-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #1ABD8D;
+  transition: width 0.3s ease;
+}
+
+.task-progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8px;
+  color: white;
+  text-shadow: 0px 0px 2px #000;
+  white-space: nowrap;
+}
+
 .task-button {
   padding: 8px 10px;
   border-radius: 20px;
   border: 2px solid #000000;
   background-color: #FFE169;
   color: black;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 500;
   min-width: 80px;
   width: 80px;
@@ -85,17 +121,35 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
 }
 
 .task-button:active {
   opacity: 0.7;
 }
 
-.loading {
+.task-button.claim-ready {
+  background-color: #1ABD8D;
+  color: white;
+  animation: pulse 1.5s infinite;
+}
+
+.task-button.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.loading, .no-tasks {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 200px;
   color: white;
+  text-align: center;
 }

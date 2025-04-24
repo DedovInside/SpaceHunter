@@ -16,9 +16,11 @@ class User(Base):
     referred_by_id = Column(Integer, ForeignKey("users.id"), nullable=True)
 
     # Поле для хранения адреса TON кошелька
+    ton_wallet_address = Column(String, nullable=True)
 
     # Отношения
     game_state = relationship("GameState", back_populates="user", uselist=False)
+    daily_game_state = relationship("DailyGameState", back_populates="user", uselist=False)
     boosts = relationship("UserBoost", back_populates="user")
     tasks = relationship("UserTask", back_populates="user")
     nfts = relationship("UserNFT", back_populates="user")

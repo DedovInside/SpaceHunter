@@ -2,8 +2,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from app.models.game_state import GameState
+from app.models.daily_game_state import DailyGameState
 from app.models.user import User
 from app.schemas.user import UserCreate
+from datetime import datetime
 
 INVITER_BONUS = 100
 INVITED_BONUS = 50
@@ -17,12 +19,24 @@ async def create_user(db: AsyncSession, user: UserCreate):
     game_state = GameState(
         user_id=db_user.id,
         level=1,
-        score=0.0,
-        balance=0.0,
+        score=0,
+        balance=0,
         energy=100,
         boost_multiplier=1.0,
     )
+    
     db.add(game_state)
+
+
+    daily_game_state = DailyGameState(
+        user_id=db_user.id,
+        score = 0,
+        balance = 0,
+        energy_spent = 0,
+        day_start=datetime.now(),
+        last_update=datetime.now()
+    )
+    db.add(daily_game_state)
 
     await db.commit()
     await db.refresh(db_user)
@@ -46,8 +60,26 @@ async def create_user_with_referral(telegram_id: int, username: str, ref_id: int
     await db.flush()  # Чтобы получить new_user.id
 
     # Создаем GameState для нового пользователя
-    new_game_state = GameState(user_id=new_user.id, balance=0)
+    new_game_state = GameState(
+        user_id=new_user.id, 
+        level=1,
+        score=0, 
+        balance=0,
+        energy=100,
+        boost_multiplier=1.0
+    )
     db.add(new_game_state)
+
+    # Исправлено: создаем DailyGameState с правильными полями
+    new_daily_game_state = DailyGameState(
+        user_id=new_user.id, 
+        score=0, 
+        balance=0, 
+        energy_spent=0,
+        day_start=datetime.now(),
+        last_update=datetime.now()
+    )
+    db.add(new_daily_game_state)
 
     # Даём бонус приглашённому
     new_game_state.balance += INVITED_BONUS

@@ -3,7 +3,6 @@ from sqlalchemy.future import select
 from datetime import datetime
 from sqlalchemy.orm import selectinload
 from app.models.user import User
-from app.services.task_checker import update_task_progress
 
 MAX_PASSIVE_ACCUMULATION_TIME = 3600  # 1 hour in seconds
 MINUTE_INTERVAL = 60  # Apply income every minute when in-app
@@ -24,6 +23,7 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
     result = await db.execute(
         select(User)
         .options(selectinload(User.game_state))
+        .options(selectinload(User.daily_game_state))
         .filter(User.telegram_id == telegram_id)
     )
     user = result.scalars().first()
@@ -39,12 +39,22 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
     base_income = base_click_income(game_state.level)
     reward = base_income * game_state.boost_multiplier
 
-    # Обновляем состояние
+    # Обновляем состояние игры
     game_state.score += reward
     game_state.balance += reward
     game_state.last_click_at = datetime.utcnow()
     
     game_state.energy -= 1
+
+    daily_game_state = user.daily_game_state
+    if not daily_game_state:
+        return {"error": "Daily game state not found"}
+    
+
+
+    daily_game_state.score += 1
+    daily_game_state.balance += reward
+    daily_game_state.energy_spent += 1
     
     # Проверяем, можно ли повысить уровень
     leveled_up = False
@@ -58,16 +68,12 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
             game_state.score = 0
             leveled_up = True
 
-    await db.commit()
-    await db.refresh(game_state)
+    
+   
 
-     # Проверяем прогресс заданий
-    completed_tasks = await update_task_progress(db, user.id, "taps", 1)
-    if leveled_up:
-        level_tasks = await update_task_progress(db, user.id, "level", game_state.level)
-        completed_tasks.extend(level_tasks)
-    energy_tasks = await update_task_progress(db, user.id, "energy_spent", 1)
-    completed_tasks.extend(energy_tasks)
+    # Делаем commit только один раз в конце всей функции
+    await db.commit()
+
 
     return {
         "reward": reward,
@@ -75,8 +81,7 @@ async def process_click(db: AsyncSession, telegram_id: int) -> dict:
         "new_balance": game_state.balance,
         "level": game_state.level,
         "leveled_up": leveled_up,
-        "energy": game_state.energy,
-        "completed_tasks": completed_tasks
+        "energy": game_state.energy
     }
 
 

@@ -106,6 +106,7 @@ interface UserTaskResponse {
   task: TaskResponse;
   progress: number;
   is_completed: boolean;
+  is_claimed: boolean;
 }
 
 export interface DailyBonusStatus {
@@ -198,21 +199,44 @@ export const boostApi = {
     }),
 };
 
+// В объект taskApi добавьте следующие методы:
+
 export const taskApi = {
-  // Получение всех заданий для пользователя
+  // Существующие методы...
   getUserTasks: (telegramId: number | string) => 
     api.get<any, UserTaskResponse[]>(`/tasks/user/${telegramId}`),
   
-  // Получение всех доступных заданий
   getTasks: () => 
     api.get<any, TaskResponse[]>('/tasks'),
     
-  // Проверка выполнения задания
   checkTask: (telegramId: number | string, taskId: number) =>
     api.post<any, UserTaskResponse>('/tasks/check', {
       telegram_id: telegramId,
       task_id: taskId
     }),
+    
+  // Добавляем новый метод для получения награды за задание
+  claimTaskReward: (telegramId: number | string, taskId: number) => 
+    api.post<any, {
+      success: boolean;
+      reward?: number;
+      new_balance?: number;
+      task_id?: number;
+      error?: string;
+    }>(`/tasks/claim/${telegramId}/${taskId}`),
+    
+  // Новые методы для работы с заданиями
+  checkTasksProgress: (telegramId: number | string) => 
+    api.post<any, {
+      success: boolean;
+      completed_tasks: number[];
+    }>(`/tasks/check_progress/${telegramId}`),
+    
+  checkDailyReset: (telegramId: number | string) => 
+    api.post<any, {
+      success: boolean;
+      was_reset: boolean;
+    }>(`/tasks/daily_reset/${telegramId}`)
 }
  
 export const userApi = {
