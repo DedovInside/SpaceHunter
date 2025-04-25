@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: spacehunter_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/spacehunter
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+    networks:
+      - spacehunter-network
+
+  db:
+    image: postgres:14
+    container_name: spacehunter_db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=spacehunter
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - spacehunter-network
+
+networks:
+  spacehunter-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
