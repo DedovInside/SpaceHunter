@@ -3,6 +3,7 @@ import { Wallet } from 'lucide-react';
 import { Page } from '@/components/Page.tsx';
 import { gameApi, walletApi } from '@/services/api';
 import { TonConnectButton, useTonWallet, useTonConnectUI } from '@tonconnect/ui-react';
+import { toUserFriendlyAddress } from '@tonconnect/sdk';
 import TONCoinPixel from '../../../assets/TON_Coin_Pixel.png';
 import './DropPage.css';
 
@@ -11,29 +12,62 @@ export const DropPage: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
-  
-  // Подключаем tonConnect UI для прямого вызова модального окна
+
   const [tonConnectUI] = useTonConnectUI();
   const wallet = useTonWallet();
   const tonConnectRef = useRef<HTMLDivElement>(null);
-  
-  // Получаем Id пользователя из Telegram WebApp
+
   const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 99281932;
 
-  // Загрузка баланса и состояния кошелька только с сервера
+  // Синхронизация состояния кошелька
+  useEffect(() => {
+    const handleStatusChange = async (walletInfo: any) => {
+      if (!walletInfo) {
+        setIsWalletConnected(false);
+        setWalletAddress('');
+        return;
+      }
+
+      try {
+        const walletStatus = await walletApi.getWalletStatus(Number(userId));
+        if (!walletStatus.is_connected) {
+          await tonConnectUI.disconnect();
+          setIsWalletConnected(false);
+          setWalletAddress('');
+        } else {
+          const userFriendlyAddress = toUserFriendlyAddress(walletInfo.account.address);
+          setIsWalletConnected(true);
+          setWalletAddress(userFriendlyAddress);
+        }
+      } catch (error) {
+        console.error('Error checking wallet status:', error);
+        await tonConnectUI.disconnect();
+        setIsWalletConnected(false);
+        setWalletAddress('');
+      }
+    };
+
+    const unsubscribe = tonConnectUI.onStatusChange(handleStatusChange);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [tonConnectUI, userId]);
+
+  // Загрузка баланса и состояния кошелька
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        // Получаем текущее состояние игры с сервера
         const state = await gameApi.getGameState(userId);
         setBalance(state.balance);
-        
-        // Получаем статус кошелька ТОЛЬКО с сервера
+
         const walletStatus = await walletApi.getWalletStatus(Number(userId));
         setIsWalletConnected(walletStatus.is_connected);
         if (walletStatus.address) {
           setWalletAddress(walletStatus.address);
+        } else if (wallet) {
+          await tonConnectUI.disconnect();
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -45,46 +79,50 @@ export const DropPage: FC = () => {
     fetchData();
     const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
-  }, [userId]);
+  }, [userId, wallet, tonConnectUI]);
 
-  // Отслеживаем подключение кошелька после нажатия на кнопку
+  // Отслеживаем подключение кошелька
   useEffect(() => {
-    if (wallet && wallet.account?.address) {
+    if (wallet && wallet.account?.address && !isWalletConnected) {
       (async () => {
         try {
-          // Сохраняем адрес только если явно нажали на кнопку подключения
-          if (!isWalletConnected) {
-            await walletApi.connectWallet(Number(userId), wallet.account.address);
-            setIsWalletConnected(true);
-            setWalletAddress(wallet.account.address);
-          }
+          const userFriendlyAddress = toUserFriendlyAddress(wallet.account.address);
+          await walletApi.connectWallet(Number(userId), userFriendlyAddress);
+          setIsWalletConnected(true);
+          setWalletAddress(userFriendlyAddress);
         } catch (error) {
           console.error('Error saving wallet address:', error);
+          await tonConnectUI.disconnect();
+          setIsWalletConnected(false);
+          setWalletAddress('');
         }
       })();
     }
-  }, [wallet, userId, isWalletConnected]);
+  }, [wallet, userId, isWalletConnected, tonConnectUI]);
 
-  // Функция для подключения кошелька
   const connectWallet = async () => {
     try {
-      // Напрямую открываем модальное окно выбора кошелька
       await tonConnectUI.openModal();
     } catch (error) {
       console.error('Failed to open wallet modal:', error);
+      alert('Failed to connect wallet. Please try again.');
     }
   };
 
-  // Функция для открытия кошелька
-  const openWallet = async () => {
+  const disconnectWallet = async () => {
     try {
-      if (wallet) {
-        // Открываем уже подключенный кошелек
-        await tonConnectUI.openModal();
-      }
+      await tonConnectUI.disconnect();
+      await walletApi.disconnectWallet(Number(userId));
+      setIsWalletConnected(false);
+      setWalletAddress('');
     } catch (error) {
-      console.error('Failed to open wallet:', error);
+      console.error('Failed to disconnect wallet:', error);
     }
+  };
+
+  const copyWalletAddress = () => {
+    navigator.clipboard.writeText(walletAddress);
+    alert('Wallet address copied to clipboard!');
   };
 
   return (
@@ -98,36 +136,29 @@ export const DropPage: FC = () => {
             </div>
           </div>
         </div>
-        
+
         <img src={TONCoinPixel} alt="TON Coin" className="ton-coin-image" />
-        
-        {/* Скрытая оригинальная кнопка TonConnect - больше не нужна */}
+
         <div className="hidden-ton-connect" ref={tonConnectRef}>
           <TonConnectButton />
         </div>
-        
+
         {isWalletConnected && walletAddress ? (
           <div className="connected-wallet-container">
             <div className="wallet-info">
-              <p className="wallet-address">
+              <p className="wallet-address" onClick={copyWalletAddress}>
                 {`${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`}
               </p>
               <p className="wallet-connected-text">Wallet Connected</p>
             </div>
-            <button 
-              className="connect-wallet-button"
-              onClick={openWallet}
-            >
+            <button className="connect-wallet-button" onClick={disconnectWallet}>
               <Wallet className="wallet-icon" />
-              <span className="wallet-button-text">Open Wallet</span>
+              <span className="wallet-button-text">Disconnect Wallet</span>
             </button>
           </div>
         ) : (
           <div className="wallet-button-container">
-            <button 
-              className="connect-wallet-button"
-              onClick={connectWallet}
-            >
+            <button className="connect-wallet-button" onClick={connectWallet}>
               <Wallet className="wallet-icon" />
               <span className="wallet-button-text">Connect TON Wallet</span>
             </button>
@@ -136,4 +167,4 @@ export const DropPage: FC = () => {
       </div>
     </Page>
   );
-}
+};
