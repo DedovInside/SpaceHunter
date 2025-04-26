@@ -47,28 +47,39 @@ export const DropPage: FC = () => {
 
   // Отслеживание изменений в подключении кошелька
   useEffect(() => {
-    const saveWalletAddress = async () => {
+    // Проверяем только состояние из API, но не сохраняем автоматически
+    const checkWalletStatus = async () => {
       try {
-        if (wallet && wallet.account?.address) {
-          // Сохраняем адрес кошелька в базе, если он подключен
-          if (!isWalletConnected || walletAddress !== wallet.account.address) {
-            await walletApi.connectWallet(Number(userId), wallet.account.address);
-            setIsWalletConnected(true);
-            setWalletAddress(wallet.account.address);
-          }
-        } else if (isWalletConnected && !wallet) {
-          // Отключаем кошелек, если он был отключен в UI
-          await walletApi.disconnectWallet(Number(userId));
-          setIsWalletConnected(false);
-          setWalletAddress('');
+        const walletStatus = await walletApi.getWalletStatus(Number(userId));
+        setIsWalletConnected(walletStatus.is_connected);
+        if (walletStatus.address) {
+          setWalletAddress(walletStatus.address);
         }
       } catch (error) {
-        console.error('Wallet update error:', error);
+        console.error('Error checking wallet status:', error);
       }
     };
     
-    saveWalletAddress();
-  }, [wallet, userId, isWalletConnected, walletAddress]);
+    // Проверяем только при монтировании компонента
+    checkWalletStatus();
+  }, [userId]); // Зависимость только от userId, а не от wallet
+
+  // Добавьте новую функцию для явного подключения
+  const connectWallet = async () => {
+    try {
+      // Сначала активируем диалог подключения TON Connect
+      handleWalletButtonClick();
+      
+      // Далее в другом useEffect можно отслеживать изменение wallet
+      if (wallet && wallet.account?.address) {
+        await walletApi.connectWallet(Number(userId), wallet.account.address);
+        setIsWalletConnected(true);
+        setWalletAddress(wallet.account.address);
+      }
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+    }
+  };
 
   // Обработчик клика по кнопке кошелька
   const handleWalletButtonClick = () => {
@@ -107,7 +118,7 @@ export const DropPage: FC = () => {
             </div>
             <button 
               className="connect-wallet-button"
-              onClick={handleWalletButtonClick}
+              onClick={connectWallet}
             >
               <Wallet className="wallet-icon" />
               Open Wallet
@@ -118,7 +129,7 @@ export const DropPage: FC = () => {
             {/* Наша стилизованная кнопка */}
             <button 
               className="connect-wallet-button"
-              onClick={handleWalletButtonClick}
+              onClick={connectWallet}
             >
               <Wallet className="wallet-icon" />
               Connect TON Wallet
