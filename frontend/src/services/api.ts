@@ -132,6 +132,11 @@ export interface DailyBonusConfig {
   amount: number;
 }
 
+export interface WalletStatus {
+  is_connected: boolean;
+  address: string | null;
+}
+
 // API методы
 export const gameApi = {
   click: (telegramId: number | string) => 
@@ -200,19 +205,16 @@ export const bonusApi = {
     api.get<any, DailyBonusConfig[]>('/bonus/daily/config'),
 };
 
-// Исправляем walletApi, убирая лишний символ $ в URL
 export const walletApi = {
   connectWallet: async (telegramId: number, address: string) => {
-    const response = await api.post(`/wallet/${telegramId}/connect`, { address });
-    return response.data;
+    return api.post(`/wallet/${telegramId}/connect`, { address });
   },
-  getWalletStatus: async (telegramId: number) => {
-    const response = await api.get(`/wallet/${telegramId}/status`);
-    console.log('Wallet status response:', response.data); // Логируем ответ
-    return response.data;
+  getWalletStatus: async (telegramId: number): Promise<WalletStatus> => {
+    const response = await api.get<any, WalletStatus>(`/wallet/${telegramId}/status`);
+    console.log('Wallet status response:', response);
+    return response;
   },
   disconnectWallet: async (telegramId: number) => {
-    const response = await api.delete(`/wallet/${telegramId}/disconnect`);
-    return response.data;
+    return api.delete(`/wallet/${telegramId}/disconnect`);
   },
 };
