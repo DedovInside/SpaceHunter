@@ -3,6 +3,7 @@ import { useLaunchParams, miniApp, useSignal } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 
+import { userApi } from '@/services/api';
 import { PageHeader } from '@/components/PageHeader/PageHeader.tsx';
 import { NavigationBar } from '@/components/NavigationBar/NavigationBar.tsx';
 import { Spinner } from '@/components/Spinner/Spinner.tsx';
@@ -28,24 +29,37 @@ function AuthWrapper({ children }: AuthWrapperProps) {
         setIsAuthenticated(success);
         
         if (success) {
-          // Apply returning income when user comes back to the app
-          try {
-            const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 99281932;
-            const result = await gameApi.applyReturningIncome(userId);
-            
-            // Show notification if income was collected
-            if (result.applied_income > 0) {
-              console.log(`Welcome back! You collected ${result.applied_income} CSM while away.`);
-              // You could add a toast notification here
+          // Обработка реферального параметра
+          const lp = useLaunchParams();
+          const startParam = lp.startParam;
+          const userId = lp.initData?.user?.id || 99281932;
+          const username = lp.initData?.user?.username || 'anonymous';
+
+          console.log('Start param:', startParam); // Для отладки
+
+          if (startParam) {
+            // Преобразуем параметр в число
+            const refId = parseInt(startParam, 10);
+            if (!isNaN(refId) && refId !== userId) { // Проверяем, что это не сам пользователь
+              try {
+                console.log(`Processing referral: User ${userId} invited by ${refId}`);
+                
+                // Используем метод из API
+                await userApi.registerWithReferral(userId, username, refId);
+                console.log('Referral processed successfully');
+              } catch (refError) {
+                console.error('Error processing referral:', refError);
+              }
             }
-          } catch (passiveError) {
-            console.error('Error applying returning income:', passiveError);
           }
           
-          // Redirect to main page if needed
-          const currentPath = window.location.pathname;
-          if (currentPath === '/SpaceHunter/error' || currentPath === '/' || currentPath === '/SpaceHunter/') {
-            navigate('/SpaceHunter/fly');
+          // Apply returning income when user comes back to the app
+          try {
+            const result = await gameApi.applyReturningIncome(userId || 99281932);
+            
+            // Rest of existing code...
+          } catch (passiveError) {
+            console.error('Error applying returning income:', passiveError);
           }
         } else {
           navigate('/SpaceHunter/error');
