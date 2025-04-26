@@ -19,10 +19,35 @@ export const DropPage: FC = () => {
 
   const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 99281932;
 
+  // Начальная проверка состояния кошелька
+  useEffect(() => {
+    const initializeWalletStatus = async () => {
+      try {
+        const walletStatus = await walletApi.getWalletStatus(Number(userId));
+        console.log('Initial walletStatus:', walletStatus);
+        setIsWalletConnected(walletStatus.is_connected);
+        if (walletStatus.address) {
+          setWalletAddress(walletStatus.address);
+        } else if (wallet) {
+          await tonConnectUI.disconnect();
+          setIsWalletConnected(false);
+          setWalletAddress('');
+        }
+      } catch (error) {
+        console.error('Error initializing wallet status:', error);
+        setIsWalletConnected(false);
+        setWalletAddress('');
+      }
+    };
+
+    initializeWalletStatus();
+  }, [userId, tonConnectUI]);
+
   // Синхронизация состояния кошелька
   useEffect(() => {
     const handleStatusChange = async (walletInfo: any) => {
       if (!walletInfo) {
+        console.log('Wallet disconnected');
         setIsWalletConnected(false);
         setWalletAddress('');
         return;
@@ -30,12 +55,15 @@ export const DropPage: FC = () => {
 
       try {
         const walletStatus = await walletApi.getWalletStatus(Number(userId));
+        console.log('onStatusChange walletStatus:', walletStatus);
         if (!walletStatus.is_connected) {
+          console.log('Server says wallet is not connected, disconnecting...');
           await tonConnectUI.disconnect();
           setIsWalletConnected(false);
           setWalletAddress('');
         } else {
           const userFriendlyAddress = toUserFriendlyAddress(walletInfo.account.address);
+          console.log('Wallet connected:', userFriendlyAddress);
           setIsWalletConnected(true);
           setWalletAddress(userFriendlyAddress);
         }
@@ -54,23 +82,15 @@ export const DropPage: FC = () => {
     };
   }, [tonConnectUI, userId]);
 
-  // Загрузка баланса и состояния кошелька
+  // Загрузка баланса
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         const state = await gameApi.getGameState(userId);
         setBalance(state.balance);
-
-        const walletStatus = await walletApi.getWalletStatus(Number(userId));
-        setIsWalletConnected(walletStatus.is_connected);
-        if (walletStatus.address) {
-          setWalletAddress(walletStatus.address);
-        } else if (wallet) {
-          await tonConnectUI.disconnect();
-        }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching balance:', error);
       } finally {
         setIsLoading(false);
       }
@@ -79,7 +99,7 @@ export const DropPage: FC = () => {
     fetchData();
     const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
-  }, [userId, wallet, tonConnectUI]);
+  }, [userId]);
 
   // Отслеживаем подключение кошелька
   useEffect(() => {
