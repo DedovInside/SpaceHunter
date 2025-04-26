@@ -25,6 +25,7 @@ export const DropPage: FC = () => {
       try {
         const walletStatus = await walletApi.getWalletStatus(Number(userId));
         console.log('Initial walletStatus:', walletStatus);
+        console.log(typeof(walletStatus))
         setIsWalletConnected(walletStatus.is_connected);
         if (walletStatus.address) {
           setWalletAddress(walletStatus.address);

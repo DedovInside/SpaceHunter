@@ -208,6 +208,7 @@ export const walletApi = {
   },
   getWalletStatus: async (telegramId: number) => {
     const response = await api.get(`/wallet/${telegramId}/status`);
+    console.log('Wallet status response:', response.data); // Логируем ответ
     return response.data;
   },
   disconnectWallet: async (telegramId: number) => {
