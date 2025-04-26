@@ -9,7 +9,6 @@ import { NavigationBar } from '@/components/NavigationBar/NavigationBar.tsx';
 import { Spinner } from '@/components/Spinner/Spinner.tsx';
 import { AppRouter } from "@/navigation/AppRouter.tsx";
 import { authService } from '@/services/auth';
-import { gameApi } from '@/services/api';
 
 interface AuthWrapperProps {
   children: ReactNode;
