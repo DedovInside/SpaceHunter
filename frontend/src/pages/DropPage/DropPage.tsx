@@ -43,43 +43,55 @@ export const DropPage: FC = () => {
     initializeWalletStatus();
   }, [userId, tonConnectUI]);
 
-  // Синхронизация состояния кошелька
+  // Исправленный вариант эффекта синхронизации
   useEffect(() => {
     const handleStatusChange = async (walletInfo: any) => {
+      // Если нет информации о кошельке от tonconnect
       if (!walletInfo) {
-        console.log('Wallet disconnected');
-        setIsWalletConnected(false);
-        setWalletAddress('');
+        // НЕ очищаем кошелек сразу, а проверяем БД
+        console.log('Local wallet state changed. Checking server state...');
+        
+        try {
+          // Проверяем, есть ли кошелек в БД
+          const walletStatus = await walletApi.getWalletStatus(Number(userId));
+          console.log('Server wallet status after local change:', walletStatus);
+          
+          // Если в БД кошелек подключен и есть адрес - используем его
+          if (walletStatus.is_connected && walletStatus.address) {
+            console.log('Server has wallet connected, maintaining state');
+            setIsWalletConnected(true);
+            setWalletAddress(walletStatus.address);
+          } else {
+            // Только если в БД нет подключения, то отключаем
+            console.log('Server confirms wallet is not connected');
+            setIsWalletConnected(false);
+            setWalletAddress('');
+          }
+        } catch (error) {
+          console.error('Error checking wallet status:', error);
+          // При ошибке сохраняем текущее состояние
+        }
         return;
       }
 
+      // Если есть информация о кошельке
       try {
-        const walletStatus = await walletApi.getWalletStatus(Number(userId));
-        console.log('onStatusChange walletStatus:', walletStatus);
-        if (!walletStatus.is_connected) {
-          console.log('Server says wallet is not connected, disconnecting...');
-          await tonConnectUI.disconnect();
-          setIsWalletConnected(false);
-          setWalletAddress('');
-        } else {
-          const userFriendlyAddress = toUserFriendlyAddress(walletInfo.account.address);
-          console.log('Wallet connected:', userFriendlyAddress);
-          setIsWalletConnected(true);
-          setWalletAddress(userFriendlyAddress);
-        }
+        const userFriendlyAddress = toUserFriendlyAddress(walletInfo.account.address);
+        console.log('Wallet connected locally:', userFriendlyAddress);
+        
+        // Сначала устанавливаем локальное состояние
+        setIsWalletConnected(true);
+        setWalletAddress(userFriendlyAddress);
+        
+        // Затем синхронизируем с сервером
+        await walletApi.connectWallet(Number(userId), userFriendlyAddress);
       } catch (error) {
-        console.error('Error checking wallet status:', error);
-        await tonConnectUI.disconnect();
-        setIsWalletConnected(false);
-        setWalletAddress('');
+        console.error('Error syncing wallet with server:', error);
       }
     };
 
     const unsubscribe = tonConnectUI.onStatusChange(handleStatusChange);
-
-    return () => {
-      unsubscribe();
-    };
+    return () => { unsubscribe(); };
   }, [tonConnectUI, userId]);
 
   // Загрузка баланса
@@ -101,24 +113,6 @@ export const DropPage: FC = () => {
     return () => clearInterval(interval);
   }, [userId]);
 
-  // Отслеживаем подключение кошелька
-  useEffect(() => {
-    if (wallet && wallet.account?.address && !isWalletConnected) {
-      (async () => {
-        try {
-          const userFriendlyAddress = toUserFriendlyAddress(wallet.account.address);
-          await walletApi.connectWallet(Number(userId), userFriendlyAddress);
-          setIsWalletConnected(true);
-          setWalletAddress(userFriendlyAddress);
-        } catch (error) {
-          console.error('Error saving wallet address:', error);
-          await tonConnectUI.disconnect();
-          setIsWalletConnected(false);
-          setWalletAddress('');
-        }
-      })();
-    }
-  }, [wallet, userId, isWalletConnected, tonConnectUI]);
 
   const connectWallet = async () => {
     try {
@@ -131,8 +125,11 @@ export const DropPage: FC = () => {
 
   const disconnectWallet = async () => {
     try {
-      await tonConnectUI.disconnect();
+      // Сначала отключаем в БД
       await walletApi.disconnectWallet(Number(userId));
+      // Затем локально
+      await tonConnectUI.disconnect();
+      // И обновляем UI
       setIsWalletConnected(false);
       setWalletAddress('');
     } catch (error) {
