@@ -416,7 +416,7 @@ export const FlyPage: FC = () => {
                                                     >
                                                         {isUnlocked ? (
                                                             <img 
-                                                                src={`${import.meta.env.BASE_URL}${nft.image_path}`} 
+                                                                src={`${import.meta.env.BASE_URL}/${nft.image_path}`} 
                                                                 alt={nft.name} 
                                                             />
                                                         ) : (
@@ -445,7 +445,7 @@ export const FlyPage: FC = () => {
                     {selectedNFT && (
                         <div className="nft-detail-container">
                             <img 
-                                src={`${import.meta.env.BASE_URL}${selectedNFT.nft.image_path}`} 
+                                src={`${import.meta.env.BASE_URL}/${selectedNFT.nft.image_path}`} 
                                 alt={selectedNFT.nft.name} 
                                 className="nft-detail-image" 
                             />
@@ -468,7 +468,7 @@ export const FlyPage: FC = () => {
                     {newlyUnlockedNFTs.length > 0 && (
                         <div className="unlocked-nft-container">
                             <img 
-                                src={`${import.meta.env.BASE_URL}${newlyUnlockedNFTs[0].nft.image_path}`} 
+                                src={`${import.meta.env.BASE_URL}/${newlyUnlockedNFTs[0].nft.image_path}`} 
                                 alt={newlyUnlockedNFTs[0].nft.name} 
                                 className="unlocked-nft-image" 
                             />
