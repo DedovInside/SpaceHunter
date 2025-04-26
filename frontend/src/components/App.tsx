@@ -53,14 +53,6 @@ function AuthWrapper({ children }: AuthWrapperProps) {
             }
           }
           
-          // Apply returning income when user comes back to the app
-          try {
-            const result = await gameApi.applyReturningIncome(userId || 99281932);
-            
-            // Rest of existing code...
-          } catch (passiveError) {
-            console.error('Error applying returning income:', passiveError);
-          }
         } else {
           navigate('/SpaceHunter/error');
         }
