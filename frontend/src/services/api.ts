@@ -210,9 +210,43 @@ export const walletApi = {
     return api.post(`/wallet/${telegramId}/connect`, { address });
   },
   getWalletStatus: async (telegramId: number): Promise<WalletStatus> => {
-    const response = await api.get<any, WalletStatus>(`/wallet/${telegramId}/status`);
-    console.log('Wallet status response:', response);
-    return response;
+    try {
+      // Добавим проверки и обработку ошибок
+      const response = await api.get<any, any>(`/wallet/${telegramId}/status`);
+      console.log('Wallet API raw response:', response);
+      
+      // Если ответ пустой, вернем дефолтное значение
+      if (!response) {
+        console.warn('Empty response from wallet API, using default values');
+        return {
+          is_connected: false,
+          address: null
+        };
+      }
+      
+      // Если ответ есть, но структура неправильная, попробуем исправить
+      if (response && typeof response === 'object') {
+        const result: WalletStatus = {
+          is_connected: response.is_connected === true,
+          address: response.address || null
+        };
+        console.log('Normalized wallet status:', result);
+        return result;
+      }
+      
+      // Если ничего не подошло, вернем дефолт
+      return {
+        is_connected: false,
+        address: null
+      };
+    } catch (error) {
+      console.error('Error in getWalletStatus:', error);
+      // В случае ошибки возвращаем безопасное значение
+      return {
+        is_connected: false,
+        address: null
+      };
+    }
   },
   disconnectWallet: async (telegramId: number) => {
     return api.delete(`/wallet/${telegramId}/disconnect`);
