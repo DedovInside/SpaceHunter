@@ -19,6 +19,8 @@ function AuthWrapper({ children }: AuthWrapperProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
+  const lp = useLaunchParams();
+
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -28,22 +30,21 @@ function AuthWrapper({ children }: AuthWrapperProps) {
         setIsAuthenticated(success);
         
         if (success) {
-          // Обработка реферального параметра
-          const lp = useLaunchParams();
+          // Используем сохраненный lp, а не вызываем хук внутри эффекта
           const startParam = lp.startParam;
           const userId = lp.initData?.user?.id || 99281932;
           const username = lp.initData?.user?.username || 'anonymous';
 
-          console.log('Start param:', startParam); // Для отладки
+          console.log('Start param:', startParam);
+          console.log('User ID:', userId);
+          console.log('Username:', username);
 
           if (startParam) {
-            // Преобразуем параметр в число
             const refId = parseInt(startParam, 10);
-            if (!isNaN(refId) && refId !== userId) { // Проверяем, что это не сам пользователь
+            if (!isNaN(refId) && refId !== userId) {
               try {
                 console.log(`Processing referral: User ${userId} invited by ${refId}`);
                 
-                // Используем метод из API
                 await userApi.registerWithReferral(userId, username, refId);
                 console.log('Referral processed successfully');
               } catch (refError) {
@@ -51,8 +52,8 @@ function AuthWrapper({ children }: AuthWrapperProps) {
               }
             }
           }
-          
         } else {
+          console.error('Auth initialization failed - redirecting to error page');
           navigate('/SpaceHunter/error');
         }
       } catch (error) {
@@ -64,7 +65,7 @@ function AuthWrapper({ children }: AuthWrapperProps) {
     };
   
     initAuth();
-  }, [navigate]);
+  }, [navigate, lp]);
 
   if (isLoading) {
     return (<Spinner />);
