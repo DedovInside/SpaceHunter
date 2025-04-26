@@ -2,7 +2,7 @@ import { FC, useEffect, useState, useRef } from 'react';
 import { Wallet } from 'lucide-react';
 import { Page } from '@/components/Page.tsx';
 import { gameApi, walletApi } from '@/services/api';
-import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
+import { TonConnectButton, useTonWallet, useTonConnectUI } from '@tonconnect/ui-react';
 import TONCoinPixel from '../../../assets/TON_Coin_Pixel.png';
 import './DropPage.css';
 
@@ -12,13 +12,15 @@ export const DropPage: FC = () => {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   
+  // Подключаем tonConnect UI для прямого вызова модального окна
+  const [tonConnectUI] = useTonConnectUI();
   const wallet = useTonWallet();
   const tonConnectRef = useRef<HTMLDivElement>(null);
   
   // Получаем Id пользователя из Telegram WebApp
   const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 99281932;
 
-  // Загрузка баланса и состояния кошелька
+  // Загрузка баланса и состояния кошелька только с сервера
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -27,7 +29,7 @@ export const DropPage: FC = () => {
         const state = await gameApi.getGameState(userId);
         setBalance(state.balance);
         
-        // Получаем статус кошелька
+        // Получаем статус кошелька ТОЛЬКО с сервера
         const walletStatus = await walletApi.getWalletStatus(Number(userId));
         setIsWalletConnected(walletStatus.is_connected);
         if (walletStatus.address) {
@@ -45,47 +47,43 @@ export const DropPage: FC = () => {
     return () => clearInterval(interval);
   }, [userId]);
 
-  // Отслеживание изменений в подключении кошелька
+  // Отслеживаем подключение кошелька после нажатия на кнопку
   useEffect(() => {
-    // Проверяем только состояние из API, но не сохраняем автоматически
-    const checkWalletStatus = async () => {
-      try {
-        const walletStatus = await walletApi.getWalletStatus(Number(userId));
-        setIsWalletConnected(walletStatus.is_connected);
-        if (walletStatus.address) {
-          setWalletAddress(walletStatus.address);
+    if (wallet && wallet.account?.address) {
+      (async () => {
+        try {
+          // Сохраняем адрес только если явно нажали на кнопку подключения
+          if (!isWalletConnected) {
+            await walletApi.connectWallet(Number(userId), wallet.account.address);
+            setIsWalletConnected(true);
+            setWalletAddress(wallet.account.address);
+          }
+        } catch (error) {
+          console.error('Error saving wallet address:', error);
         }
-      } catch (error) {
-        console.error('Error checking wallet status:', error);
-      }
-    };
-    
-    // Проверяем только при монтировании компонента
-    checkWalletStatus();
-  }, [userId]); // Зависимость только от userId, а не от wallet
+      })();
+    }
+  }, [wallet, userId, isWalletConnected]);
 
-  // Добавьте новую функцию для явного подключения
+  // Функция для подключения кошелька
   const connectWallet = async () => {
     try {
-      // Сначала активируем диалог подключения TON Connect
-      handleWalletButtonClick();
-      
-      // Далее в другом useEffect можно отслеживать изменение wallet
-      if (wallet && wallet.account?.address) {
-        await walletApi.connectWallet(Number(userId), wallet.account.address);
-        setIsWalletConnected(true);
-        setWalletAddress(wallet.account.address);
-      }
+      // Напрямую открываем модальное окно выбора кошелька
+      await tonConnectUI.openModal();
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
+      console.error('Failed to open wallet modal:', error);
     }
   };
 
-  // Обработчик клика по кнопке кошелька
-  const handleWalletButtonClick = () => {
-    const buttonElement = tonConnectRef.current?.querySelector('button');
-    if (buttonElement) {
-      buttonElement.click();
+  // Функция для открытия кошелька
+  const openWallet = async () => {
+    try {
+      if (wallet) {
+        // Открываем уже подключенный кошелек
+        await tonConnectUI.openModal();
+      }
+    } catch (error) {
+      console.error('Failed to open wallet:', error);
     }
   };
 
@@ -103,7 +101,7 @@ export const DropPage: FC = () => {
         
         <img src={TONCoinPixel} alt="TON Coin" className="ton-coin-image" />
         
-        {/* Скрытая оригинальная кнопка TonConnect */}
+        {/* Скрытая оригинальная кнопка TonConnect - больше не нужна */}
         <div className="hidden-ton-connect" ref={tonConnectRef}>
           <TonConnectButton />
         </div>
@@ -118,21 +116,20 @@ export const DropPage: FC = () => {
             </div>
             <button 
               className="connect-wallet-button"
-              onClick={connectWallet}
+              onClick={openWallet}
             >
               <Wallet className="wallet-icon" />
-              Open Wallet
+              <span className="wallet-button-text">Open Wallet</span>
             </button>
           </div>
         ) : (
           <div className="wallet-button-container">
-            {/* Наша стилизованная кнопка */}
             <button 
               className="connect-wallet-button"
               onClick={connectWallet}
             >
               <Wallet className="wallet-icon" />
-              Connect TON Wallet
+              <span className="wallet-button-text">Connect TON Wallet</span>
             </button>
           </div>
         )}
