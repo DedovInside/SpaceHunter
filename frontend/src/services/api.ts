@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 
 // Создаем инстанс axios с базовыми настройками
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api', // Базовый URL для API
+  baseURL: `${import.meta.env.VITE_API_URL}/api`, // Динамический базовый URL
   headers: {
     'Content-Type': 'application/json',
   },
@@ -12,7 +12,6 @@ const api = axios.create({
 api.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   error => {
-    // Добавляем более подробный вывод ошибки
     console.error('API Error:', {
       status: error.response?.status,
       statusText: error.response?.statusText,
@@ -23,9 +22,8 @@ api.interceptors.response.use(
     return Promise.reject(error.response?.data || error);
   }
 );
- 
-// Типы для ответов API
-interface GameClickResponse {
+
+export interface GameClickResponse {
   message: string;
   reward: number;
   new_score: number;
@@ -36,7 +34,7 @@ interface GameClickResponse {
   energy: number;
 }
 
-interface GameStateResponse {
+export interface GameStateResponse {
   balance: number;
   level: number;
   score: number;
@@ -44,7 +42,7 @@ interface GameStateResponse {
   boost_multiplier: number;
 }
 
-interface Boost {
+export interface Boost {
   boost_id: number;
   name: string;
   category: string;
@@ -57,7 +55,7 @@ interface Boost {
   current_cost: number;
 }
 
-interface UpgradeBoostResponse {
+export interface UpgradeBoostResponse {
   boost_id: number;
   name: string;
   level: number;
@@ -91,7 +89,7 @@ export interface UserNFT {
   acquired_at: string;
 }
 
-interface TaskResponse {
+export interface TaskResponse {
   id: number;
   title: string;
   description: string;
@@ -101,7 +99,7 @@ interface TaskResponse {
   condition_type: string;
 }
 
-interface UserTaskResponse {
+export interface UserTaskResponse {
   id: number;
   task: TaskResponse;
   progress: number;
@@ -116,7 +114,7 @@ export interface DailyBonusStatus {
   days_streak: number;
 }
 
-interface DailyBonusResult {
+export interface DailyBonusResult {
   success: boolean;
   message: string;
   reward_type: string;
@@ -134,173 +132,86 @@ export interface DailyBonusConfig {
   amount: number;
 }
 
-// API методы сгруппированы по функциональности
+// API методы
 export const gameApi = {
-  // Обработка клика (в FlyPage)
   click: (telegramId: number | string) => 
     api.post<any, GameClickResponse>(`/game/click?telegram_id=${telegramId}`),
-  
-  // Получение состояния игры пользователя
   getGameState: (telegramId: number | string) => 
     api.get<any, GameStateResponse>(`/game/state/${telegramId}`),
-
-
-  // Получение пассивного дохода
   getPassiveIncome: (telegramId: number | string) => 
-    api.get<any, {
-      passive_income_rate: number,
-      accumulated_income: number,
-      max_accumulation_time: number,
-      time_accumulated: number
-    }>(`/game/passive_income/${telegramId}`),
-
-
+    api.get<any, { passive_income_rate: number, accumulated_income: number, max_accumulation_time: number, time_accumulated: number }>(`/game/passive_income/${telegramId}`),
   applyReturningIncome: (telegramId: number | string) => 
-    api.post<any, { 
-      applied_income: number,
-      new_balance: number 
-    }>(`/game/apply_returning_income/${telegramId}`),
-
-
-  // Получение пассивного дохода при нахождении в игре
+    api.post<any, { applied_income: number, new_balance: number }>(`/game/apply_returning_income/${telegramId}`),
   applyPassiveIncome: (telegramId: number | string) => 
-    api.post<any, { 
-      applied_income: number,
-      new_balance: number 
-    }>(`/game/apply_passive_income/${telegramId}`),
-
-  // Получение состояния энергии
+    api.post<any, { applied_income: number, new_balance: number }>(`/game/apply_passive_income/${telegramId}`),
   getEnergyState: (telegramId: number | string) => 
-    api.get<any, {
-        current_energy: number,
-        energy_to_restore: number,
-        max_energy: number
-    }>(`/game/energy/${telegramId}`),
-
-  // Применение восстановления энергии
+    api.get<any, { current_energy: number, energy_to_restore: number, max_energy: number }>(`/game/energy/${telegramId}`),
   applyEnergyRestore: (telegramId: number | string) => 
-    api.post<any, {
-        new_energy: number,
-        restored_amount: number,
-        max_energy: number
-    }>(`/game/energy/restore/${telegramId}`)
+    api.post<any, { new_energy: number, restored_amount: number, max_energy: number }>(`/game/energy/restore/${telegramId}`),
 };
 
 export const boostApi = {
-  // Получение всех бустов для пользователя
   getUserBoosts: (telegramId: number | string) => 
     api.get<any, Boost[]>(`/boosts/user/${telegramId}`),
-  
-  // Улучшение буста
   upgradeBoost: (telegramId: number | string, boostId: number) => 
-    api.post<any, UpgradeBoostResponse>('/boosts/upgrade', { 
-      telegram_id: telegramId, 
-      boost_id: boostId 
-    }),
+    api.post<any, UpgradeBoostResponse>('/boosts/upgrade', { telegram_id: telegramId, boost_id: boostId }),
 };
 
-// В объект taskApi добавьте следующие методы:
-
 export const taskApi = {
-  // Существующие методы...
   getUserTasks: (telegramId: number | string) => 
     api.get<any, UserTaskResponse[]>(`/tasks/user/${telegramId}`),
-  
   getTasks: () => 
     api.get<any, TaskResponse[]>('/tasks'),
-    
   checkTask: (telegramId: number | string, taskId: number) =>
-    api.post<any, UserTaskResponse>('/tasks/check', {
-      telegram_id: telegramId,
-      task_id: taskId
-    }),
-    
-  // Добавляем новый метод для получения награды за задание
+    api.post<any, UserTaskResponse>('/tasks/check', { telegram_id: telegramId, task_id: taskId }),
   claimTaskReward: (telegramId: number | string, taskId: number) => 
-    api.post<any, {
-      success: boolean;
-      reward?: number;
-      new_balance?: number;
-      task_id?: number;
-      error?: string;
-    }>(`/tasks/claim/${telegramId}/${taskId}`),
-    
-  // Новые методы для работы с заданиями
+    api.post<any, { success: boolean; reward?: number; new_balance?: number; task_id?: number; error?: string }>(`/tasks/claim/${telegramId}/${taskId}`),
   checkTasksProgress: (telegramId: number | string) => 
-    api.post<any, {
-      success: boolean;
-      completed_tasks: number[];
-    }>(`/tasks/check_progress/${telegramId}`),
-    
+    api.post<any, { success: boolean; completed_tasks: number[] }>(`/tasks/check_progress/${telegramId}`),
   checkDailyReset: (telegramId: number | string) => 
-    api.post<any, {
-      success: boolean;
-      was_reset: boolean;
-    }>(`/tasks/daily_reset/${telegramId}`)
-}
- 
+    api.post<any, { success: boolean; was_reset: boolean }>(`/tasks/daily_reset/${telegramId}`),
+};
+
 export const userApi = {
-  // Получение информации о пользователе
   getUser: (telegramId: number | string) => api.get(`/users/${telegramId}`),
-  
-  // Регистрация пользователя
   registerUser: (telegramId: number | string, username: string) => 
     api.post('/users/register', { telegram_id: telegramId, username }),
-
-
-  // Получение списка рефералов пользователя
-  // Заменить текущую реализацию метода на:
   getUserReferrals: (telegramId: number | string) => 
     api.get<any, any[]>(`/users/referrals/${telegramId}`),
 };
 
 export const nftApi = {
-  // Получение всех категорий NFT
   getCategories: () => 
     api.get<any, NFTCategory[]>('/nft/categories'),
-  
-  // Получение коллекции пользователя
   getUserCollection: (telegramId: number | string) => 
     api.get<any, UserNFT[]>(`/nft/user/${telegramId}`),
-  
-  // Получение доступных NFT
   getAvailableNFTs: (telegramId: number | string) => 
     api.get<any, NFT[]>(`/nft/available/${telegramId}`),
-  
-  // Автоматическая разблокировка всех доступных NFT
   autoUnlockNFTs: (telegramId: number | string) => 
-    api.post<any, UserNFT[]>(`/nft/auto-unlock/${telegramId}`)
+    api.post<any, UserNFT[]>(`/nft/auto-unlock/${telegramId}`),
 };
 
 export const bonusApi = {
-  // Получить статус ежедневных бонусов
   getDailyBonusStatus: (telegramId: number | string) =>
     api.get<any, DailyBonusStatus>(`/bonus/daily/status/${telegramId}`),
-
-  // Забрать ежедневный бонус
   claimDailyBonus: (telegramId: number | string) =>
     api.post<any, DailyBonusResult>(`/bonus/daily/claim/${telegramId}`),
-
-  // Получить конфигурацию бонусов
   getDailyBonusConfig: () =>
     api.get<any, DailyBonusConfig[]>('/bonus/daily/config'),
 };
 
-
-// Добавьте методы для работы с кошельком
+// Исправляем walletApi, убирая лишний символ $ в URL
 export const walletApi = {
   connectWallet: async (telegramId: number, address: string) => {
-      const response = await axios.post(`$/wallet/${telegramId}/connect`, { address });
-      return response.data;
+    const response = await api.post(`/wallet/${telegramId}/connect`, { address });
+    return response.data;
   },
-  
   getWalletStatus: async (telegramId: number) => {
-      const response = await axios.get(`$/wallet/${telegramId}/status`);
-      return response.data;
+    const response = await api.get(`/wallet/${telegramId}/status`);
+    return response.data;
   },
-  
   disconnectWallet: async (telegramId: number) => {
-      const response = await axios.delete(`$/wallet/${telegramId}/disconnect`);
-      return response.data;
-  }
+    const response = await api.delete(`/wallet/${telegramId}/disconnect`);
+    return response.data;
+  },
 };

@@ -18,46 +18,17 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
+# Настройка CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Разрешаем запросы с фронтенда
+    allow_origins=[
+        "https://app.tgspacehunter.ru",
+        "https://dedovinside.github.io",
+    ],
     allow_credentials=True,
-    allow_methods=["*"],  # Разрешаем все HTTP методы
-    allow_headers=["*"],  # Разрешаем все заголовки
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
-
-
-@app.middleware("http")
-async def some_middleware(request: Request, call_next):
-    try:
-        print("ABOBA")
-        response = await call_next(request)
-        # Добавляем заголовок CORS для всех ответов
-
-        print("ABOBA_ABOBA")
-
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-        return response
-
-
-    except Exception as e:
-        # Для ошибок создаем JSONResponse с нужными заголовками
-        content = {"message": str(e)}
-        headers = {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization"
-        }
-        # Явно указываем status_code=500
-        return JSONResponse(
-            status_code=500,  # Здесь указываем нужный код ошибки
-            content=content,
-            headers=headers
-        )
-
 
 # Подключаем маршруты
 app.include_router(users.router, prefix="/api")
@@ -68,21 +39,19 @@ app.include_router(rating.router, prefix="/api")
 app.include_router(nft.router, prefix="/api")
 app.include_router(bonus.router, prefix="/api")
 app.include_router(wallet.router, prefix="/api")
-# Глобальный список фоновых тасковx
-background_tasks = []
 
+# Глобальный список фоновых тасков
+background_tasks = []
 
 # Dependency для получения асинхронной сессии базы данных
 async def get_db():
     async with AsyncSessionLocal() as db:
         yield db
 
-
 # Главная страница
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the game backend!"}
-
 
 # Запускаем фоновый процесс пассивного дохода
 @app.on_event("startup")
