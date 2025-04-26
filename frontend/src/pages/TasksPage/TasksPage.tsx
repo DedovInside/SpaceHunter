@@ -107,7 +107,7 @@ export const TasksPage: FC = () => {
       }
     } else {
       // Если задание не выполнено, просто перенаправляем на главную страницу
-      window.location.href = "/";
+      window.location.href = "/SpaceHunter/fly";
     }
   };
 
