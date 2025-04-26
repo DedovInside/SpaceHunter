@@ -514,7 +514,7 @@ export const FlyPage: FC = () => {
                                     {isMaxLevelReached() ? (
                                         "MAX LEVEL"
                                     ) : (
-                                        `${currentExp.toFixed(1)} / ${getLevelTargetExp().toFixed(0)}`
+                                        `${Math.floor(currentExp)} / ${getLevelTargetExp().toFixed(0)}`
                                     )}
                                 </div>
                             </div>

@@ -409,9 +409,14 @@
     font-size: 14px;
     font-weight: bold;
     min-width: 100px;
+    width: 100px;
     justify-content: center;
+    box-sizing: border-box;
 }
 
 .energy-value {
     color: #ffffff;
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
 }
