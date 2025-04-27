@@ -15,6 +15,11 @@ export interface TelegramUser {
  */
 
 let isInitializing = false;
+let launchParams: any = null;
+
+export const setLaunchParams = (params: any) => {
+  launchParams = params;
+};
 
 export const authService = {
   /**
@@ -22,22 +27,19 @@ export const authService = {
    * @returns Promise<boolean> - успешность операции
    */
   async initializeUser(): Promise<boolean> {
-
-    // Предотвращаем параллельные вызовы
+    // Сохраняем существующую логику блокировки параллельных вызовов
     if (isInitializing) {
       console.log("Initialization already in progress, waiting...");
-      // Ждем завершения текущей инициализации
       while (isInitializing) {
         await new Promise(resolve => setTimeout(resolve, 100));
       }
-      return true; // Предполагаем, что первая инициализация была успешной
+      return true;
     }
-
+  
     try {
-
-      isInitializing = true; // Устанавливаем флаг инициализации
-
-      // В режиме разработки добавляем задержку для загрузки мокированных данных
+      isInitializing = true;
+  
+      // Режим разработки остаётся неизменным
       if (import.meta.env.DEV) {
         await this.waitForMockData();
       }
@@ -45,20 +47,48 @@ export const authService = {
       // Извлекаем данные пользователя из Telegram WebApp
       const telegramData = window.Telegram?.WebApp?.initDataUnsafe?.user as any;
       
-      // Если данные пользователя отсутствуют, используем режим разработки или возвращаем ошибку
       if (!telegramData || !telegramData.id) {
         return import.meta.env.DEV 
           ? await this.handleDevelopmentMode() 
           : false;
       }
       
-      // Обрабатываем нормальную авторизацию с данными из Telegram WebApp
+      // Получаем базовую информацию пользователя
+      const telegramId = Number(telegramData.id);
+      const username = telegramData.username || `user_${telegramId}`;
+      
+      // Проверяем реферальный параметр используя launchParams
+      const startParam = launchParams?.startParamж
+      
+      if (startParam) {
+        const refId = parseInt(startParam, 10);
+        console.log('Start param found:', startParam);
+        console.log('Referral ID:', refId);
+        
+        if (!isNaN(refId) && refId !== telegramId) {
+          try {
+            console.log(`Using referral registration: User ${telegramId} invited by ${refId}`);
+            
+            // Вместо обычной регистрации используем реферальную
+            const response = await userApi.registerWithReferral(telegramId, username, refId);
+            console.log('User registered with referral:', response);
+            return true;
+          } catch (refError) {
+            console.error('Error during referral registration:', refError);
+            
+            // Если реферальная регистрация не сработала, пробуем обычную
+            return await this.handleTelegramAuthorization(telegramData);
+          }
+        }
+      }
+      
+      // Если нет реферального параметра, используем обычную авторизацию
       return await this.handleTelegramAuthorization(telegramData);
+      
     } catch (error) {
       console.error('Error initializing user:', error);
       return false;
     } finally {
-      // Важно! Сбрасываем флаг инициализации в любом случае
       isInitializing = false;
     }
   },
