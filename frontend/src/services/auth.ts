@@ -58,7 +58,7 @@ export const authService = {
       const username = telegramData.username || `user_${telegramId}`;
       
       // Проверяем реферальный параметр используя launchParams
-      const startParam = launchParams?.startParamж
+      const startParam = launchParams?.startParam;
       
       if (startParam) {
         const refId = parseInt(startParam, 10);
