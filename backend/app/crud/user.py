@@ -4,7 +4,7 @@ from sqlalchemy.orm import selectinload
 from app.models.game_state import GameState
 from app.models.daily_game_state import DailyGameState
 from app.models.user import User
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserReferralCreate
 from datetime import datetime
 
 INVITER_BONUS = 100
@@ -43,17 +43,16 @@ async def create_user(db: AsyncSession, user: UserCreate):
     return db_user
 
 
-async def create_user_with_referral(telegram_id: int, username: str, ref_id: int | None, db: AsyncSession):
-    # Поиск пользователя, если указан ref_id
+async def create_user_with_referral(db: AsyncSession, user_data: UserReferralCreate):
     ref_user = None
-    if ref_id:
-        result = await db.execute(select(User).where(User.telegram_id == ref_id))
+    if user_data.ref_id:
+        result = await db.execute(select(User).where(User.telegram_id == user_data.ref_id))
         ref_user = result.scalar_one_or_none()
 
     # Создание нового пользователя
     new_user = User(
-        telegram_id=telegram_id,
-        username=username,
+        telegram_id=user_data.telegram_id,
+        username=user_data.username,
         referred_by_id=ref_user.id if ref_user else None
     )
     db.add(new_user)

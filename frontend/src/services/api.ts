@@ -183,7 +183,7 @@ export const userApi = {
     api.post('/users/register', { telegram_id: telegramId, username }),
   getUserReferrals: (telegramId: number | string) => 
     api.get<any, any[]>(`/users/referrals/${telegramId}`),
-  registerWithReferral: (telegramId: number | string, username: string, refId: number) => 
+  registerWithReferral: (telegramId: number | string, username: string, refId: number | string) => 
     api.post('/users/register_with_referral', { 
       telegram_id: telegramId, 
       username, 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.user import get_user_by_telegram_id, create_user, create_user_with_referral, get_user_referrals_by_telegram_id
-from app.schemas.user import UserCreate, UserWithGameState
+from app.schemas.user import UserCreate, UserWithGameState, UserReferralCreate
 from app.database import get_db
 from typing import Optional, List
 
@@ -35,18 +35,17 @@ async def get_user(telegram_id: int, db: AsyncSession = Depends(get_db)):
 
 @router.post("/register_with_referral", response_model=UserWithGameState)
 async def register_user_with_referral(
-    telegram_id: int, 
-    username: str, 
-    ref_id: Optional[int] = None, 
+    # Используем схему Pydantic для получения данных из тела запроса
+    user_data: UserReferralCreate,
     db: AsyncSession = Depends(get_db)
 ):
     # Проверяем, существует ли уже пользователь с таким telegram_id
-    existing_user = await get_user_by_telegram_id(db, telegram_id)
+    existing_user = await get_user_by_telegram_id(db, user_data.telegram_id)
     if existing_user:
         return existing_user  # Просто возвращаем существующего пользователя
     
     # Создаем нового пользователя с реферальной системой
-    new_user = await create_user_with_referral(telegram_id, username, ref_id, db)
+    new_user = await create_user_with_referral(db, user_data)
     return new_user
 
 
