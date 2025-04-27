@@ -152,7 +152,7 @@ async def check_task_progress(db: AsyncSession, user_id: int):
                     user_task.completed_at = datetime.now()
                     completed_tasks.append(user_task)
     
-    await db.flush()
+    await db.commit()
     return completed_tasks
 
 

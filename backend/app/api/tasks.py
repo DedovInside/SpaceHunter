@@ -31,7 +31,11 @@ async def read_user_tasks(telegram_id: int, db: AsyncSession = Depends(get_db)):
     
     if user:
         # Проверяем сброс ежедневных заданий
-        await check_daily_reset(db, user.id)
+        was_reset = await check_daily_reset(db, user.id)
+        if was_reset:
+            # Если был сброс, обязательно сохраняем изменения
+            await db.commit()
+            print(f"Daily tasks reset for user {telegram_id}")
     
     return await get_user_tasks(db, telegram_id)
 
