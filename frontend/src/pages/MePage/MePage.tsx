@@ -19,7 +19,7 @@ export const MePage: FC = () => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
   const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 99281932;
-  const inviteLink = `https://t.me/space_hunter_game_bot?start=${userId}`;
+  const inviteLink = `https://t.me/space_hunter_game_bot/game?startapp=${userId}`;
 
   useEffect(() => {
     async function loadFriends() {
