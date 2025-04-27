@@ -41,6 +41,7 @@ function AuthWrapper({ children }: AuthWrapperProps) {
 
           if (startParam) {
             const refId = parseInt(startParam, 10);
+            console.log('Referral ID:', refId);
             if (!isNaN(refId) && refId !== userId) {
               try {
                 console.log(`Processing referral: User ${userId} invited by ${refId}`);
