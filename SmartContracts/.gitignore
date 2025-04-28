@@ -3,6 +3,7 @@ node_modules
 scripts/get_users_data.ts
 temp
 build
+mintData.json
 dist
 .DS_Store
 
