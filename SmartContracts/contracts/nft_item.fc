@@ -53,28 +53,30 @@ int min_tons_for_storage() asm "50000000 PUSHINT"; ;; 0.05 TON
 
     int rest_amount = my_balance - min_tons_for_storage();
     if (forward_amount) {
-        rest_amount -= (forward_amount + fwd_fees);
+      rest_amount -= (forward_amount + fwd_fees);
     }
+
     int need_response = response_destination.preload_uint(2) != 0;
     if (need_response) {
-        rest_amount -= fwd_fees;
+      rest_amount -= fwd_fees;
     }
 
     throw_unless(402, rest_amount >= 0);
 
     if (forward_amount) {
-        send_msg(new_owner_address, forward_amount, op::ownership_assigned(), query_id, begin_cell().store_slice(in_msg_body), 1);
+      send_msg(new_owner_address, forward_amount, op::ownership_assigned(), query_id, begin_cell().store_slice(owner_address).store_slice(in_msg_body), 1);  ;; paying fees, revert on errors
     }
+
     if (need_response) {
-        force_chain(response_destination);
-        send_msg(response_destination, rest_amount, op::excesses(), query_id, null(), 1);
+      force_chain(response_destination);
+      send_msg(response_destination, rest_amount, op::excesses(), query_id, null(), 1);
     }
 
     store_data(index, collection_address, new_owner_address, content);
 }
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
-    if (in_msg_body.slice_empty?()) {
+    if (in_msg_body.slice_empty?()) { ;; ignore empty messages
         return ();
     }
 
@@ -96,6 +98,7 @@ int min_tons_for_storage() asm "50000000 PUSHINT"; ;; 0.05 TON
     if (~ init?) {
         throw_unless(405, equal_slices_bits(collection_address, sender_address));
         store_data(index, collection_address, in_msg_body~load_msg_addr(), in_msg_body~load_ref());
+        return ();
     }
 
     int op = in_msg_body~load_uint(32);
@@ -114,6 +117,6 @@ int min_tons_for_storage() asm "50000000 PUSHINT"; ;; 0.05 TON
 }
 
 (int, int, slice, slice, cell) get_nft_data() method_id {
-    (int init?, int index, slice collection_address, slice owner_address, cell content) = load_data();
-    return (init?, index, collection_address, owner_address, content);
+  (int init?, int index, slice collection_address, slice owner_address, cell content) = load_data();
+  return (init?, index, collection_address, owner_address, content);
 }

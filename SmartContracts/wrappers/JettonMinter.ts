@@ -60,7 +60,7 @@ export class JettonMinter implements Contract {
                     .storeCoins(opts.jettonAmount)
                     .storeAddress(this.address)
                     .storeAddress(this.address)
-                    .storeCoins(0)
+                    .storeCoins(1)
                     .storeUint(0, 1)
                 .endCell()
             )
