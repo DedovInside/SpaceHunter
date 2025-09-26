@@ -347,6 +347,13 @@ VITE_TON_MANIFEST_URL=https://your-domain.com/tonconnect-manifest.json
 5. **Успешная демонстрация**: защита на комиссии в НИУ ВШЭ
 
 
+## Примечание
+
+Проект был выложен на арендованный сервер на месяц в период защит, но на данный момент зайти и поиграть пока нельзя.
+
+**Ссылка на защиту**: https://cs.hse.ru/cppr/best_projects/space_hunter
+
+
 ---
 
 <div align="center">
