@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Space Hunter Logo](assets/Space_Hunter_Logo.png)
+![Space Hunter Logo](frontend/public/Space_Hunter_Logo.png)
 
 **Современное full-stack Telegram Mini App с интеграцией блокчейна, NFT механиками и геймифицированным пользовательским опытом**
 
